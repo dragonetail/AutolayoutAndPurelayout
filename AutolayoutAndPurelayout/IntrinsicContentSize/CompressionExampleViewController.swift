@@ -9,9 +9,9 @@
 import UIKit
 import PureLayout
 
-class CompressionExampleViewController: ExampleViewController {
+class CompressionExampleViewController: BaseViewControllerWithAutolayout {
     lazy var label1: UILabel = {
-        let label = UILabel()
+        let label = UILabel().configureForAutoLayout("label1")
         label.backgroundColor = UIColor.purple
         label.numberOfLines = 1
         label.textColor = UIColor.white
@@ -22,7 +22,7 @@ class CompressionExampleViewController: ExampleViewController {
         return label
     }()
     lazy var label2: UILabel = {
-        let label = UILabel()
+        let label = UILabel().configureForAutoLayout("label2")
         label.backgroundColor = UIColor.purple
         label.numberOfLines = 1
         label.textColor = UIColor.white
@@ -33,16 +33,11 @@ class CompressionExampleViewController: ExampleViewController {
         return label
     }()
 
-    override func loadView() {
-        super.loadView()
-
-        setupAndComposeView()
-
-        // bootstrap Auto Layout
-        view.setNeedsUpdateConstraints()
+    override var accessibilityIdentifier: String {
+        return "Compression"
     }
 
-    func setupAndComposeView() {
+    override func setupAndComposeView() {
         self.title = "抗压能力优先级测试"
 
         [label1, label2].forEach { (subview) in
@@ -50,18 +45,7 @@ class CompressionExampleViewController: ExampleViewController {
         }
     }
 
-    fileprivate var didSetupConstraints = false
-    override func updateViewConstraints() {
-        if (!didSetupConstraints) {
-            didSetupConstraints = true
-            setupConstraints()
-        }
-        //modifyConstraints()
-
-        super.updateViewConstraints()
-    }
-
-    func setupConstraints() {
+    override func setupConstraints() {
         label1.autoPinEdge(toSuperviewEdge: .left, withInset: 20)
         label2.autoPinEdge(toSuperviewEdge: .right, withInset: 20)
 

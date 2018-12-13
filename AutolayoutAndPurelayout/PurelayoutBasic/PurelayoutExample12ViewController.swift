@@ -9,40 +9,51 @@
 import UIKit
 import PureLayout
 
-class PurelayoutExample1ViewController: BaseViewControllerWithAutolayout {
+class PurelayoutExample12ViewController: BaseViewControllerWithAutolayout {
     lazy var blueView: UIView = {
-        let view = UIView().configureForAutoLayout()
+        let view = UIView().configureForAutoLayout("blueView")
         view.backgroundColor = .blue
         return view
     }()
     lazy var redView: UIView = {
-        let view = UIView().configureForAutoLayout()
+        let view = UIView().configureForAutoLayout("redView")
         view.backgroundColor = .red
         return view
     }()
     lazy var yellowView: UIView = {
-        let view = UIView().configureForAutoLayout()
+        let view = UIView().configureForAutoLayout("yellowView")
         view.backgroundColor = .yellow
         return view
     }()
     lazy var greenView: UIView = {
-        let view = UIView().configureForAutoLayout()
+        let view = UIView().configureForAutoLayout("greenView")
         view.backgroundColor = .green
         return view
     }()
+    lazy var toggleConstraintsButton: UIButton = {
+        let button = UIButton().configureForAutoLayout("toggleConstraintsButton")
+        button.setTitle("Toggle Constraints", for: UIControl.State())
+        button.setTitleColor(.white, for: UIControl.State())
+        button.setTitleColor(.gray, for: .highlighted)
+        return button
+    }()
 
     override var accessibilityIdentifier: String {
-        return "E1"
+        return "E12"
     }
 
     override func setupAndComposeView() {
-        self.title = "Basic Auto Layout"
+        self.title = "Basic Auto Layout with Constraint toggle"
         view.backgroundColor = UIColor(white: 0.1, alpha: 1.0)
 
-        [blueView, redView, yellowView, greenView].forEach { (subview) in
+        [blueView, redView, yellowView, greenView, toggleConstraintsButton].forEach { (subview) in
             view.addSubview(subview)
         }
+        toggleConstraintsButton.addTarget(self, action: #selector(PurelayoutExample10ViewController.toggleConstraints(_:)), for: .touchUpInside)
+
     }
+
+    var greenViewHeightConstraint: NSLayoutConstraint?
 
     override func setupConstraints() {
         // Blue view is centered on screen, with size {50 pt, 50 pt}
@@ -66,8 +77,34 @@ class PurelayoutExample1ViewController: BaseViewControllerWithAutolayout {
         // with its height twice the height of the yellow view and its width fixed to 150 pt
         greenView.autoPinEdge(.top, to: .bottom, of: yellowView, withOffset: 10.0)
         greenView.autoAlignAxis(toSuperviewAxis: .vertical)
-        greenView.autoMatch(.height, to: .height, of: yellowView, withMultiplier: 2.0)
+        greenViewHeightConstraint = greenView.autoMatch(.height, to: .height, of: yellowView, withMultiplier: 2.0)
         greenView.autoSetDimension(.width, toSize: 150.0)
+
+        toggleConstraintsButton.autoPinEdge(toSuperviewEdge: .bottom, withInset: 10.0)
+        toggleConstraintsButton.autoAlignAxis(toSuperviewAxis: .vertical)
     }
 
+    // Flag that we use to know which layout we're currently in. We start with the horizontal layout.
+    var isMultiplierActive = true
+
+    /**
+     Callback when the "Toggle Constraints" button is tapped.
+     */
+    @objc func toggleConstraints(_ sender: UIButton) {
+        isMultiplierActive = !isMultiplierActive
+
+        if (isMultiplierActive) {
+            //greenViewHeightConstraint?.multiplier = 0 //Readonly property
+            greenViewHeightConstraint?.constant = 0
+        } else {
+            greenViewHeightConstraint?.constant = 100
+        }
+
+        /**
+         Uncomment the below code if you want the transitions to be animated!
+         */
+        UIView.animate(withDuration: 0.5) {
+            self.view.layoutIfNeeded()
+        }
+    }
 }

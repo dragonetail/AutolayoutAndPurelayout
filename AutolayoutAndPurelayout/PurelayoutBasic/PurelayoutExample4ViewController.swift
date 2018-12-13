@@ -9,9 +9,9 @@
 import UIKit
 import PureLayout
 
-class PurelayoutExample4ViewController: ExampleViewController {
+class PurelayoutExample4ViewController: BaseViewControllerWithAutolayout {
     lazy var blueLabel: UILabel = {
-        let label = UILabel.newAutoLayout()
+        let label = UILabel().configureForAutoLayout()
         label.backgroundColor = .blue
         label.numberOfLines = 1
         label.lineBreakMode = .byClipping
@@ -20,7 +20,7 @@ class PurelayoutExample4ViewController: ExampleViewController {
         return label
     }()
     lazy var redLabel: UILabel = {
-        let label = UILabel.newAutoLayout()
+        let label = UILabel().configureForAutoLayout()
         label.backgroundColor = .red
         label.numberOfLines = 0
         label.textColor = .white
@@ -28,22 +28,16 @@ class PurelayoutExample4ViewController: ExampleViewController {
         return label
     }()
     lazy var greenView: UIView = {
-        let view = UIView.newAutoLayout()
+        let view = UIView().configureForAutoLayout()
         view.backgroundColor = .green
         return view
     }()
 
-
-    override func loadView() {
-        super.loadView()
-
-        setupAndComposeView()
-
-        // bootstrap Auto Layout
-        view.setNeedsUpdateConstraints()
+    override var accessibilityIdentifier: String {
+        return "E4"
     }
 
-    func setupAndComposeView() {
+    override func setupAndComposeView() {
         self.title = "4.Leading & Trailing Attributes"
         view.backgroundColor = UIColor(white: 0.1, alpha: 1.0)
 
@@ -52,18 +46,7 @@ class PurelayoutExample4ViewController: ExampleViewController {
         }
     }
 
-    fileprivate var didSetupConstraints = false
-    override func updateViewConstraints() {
-        if (!didSetupConstraints) {
-            didSetupConstraints = true
-            setupConstraints()
-        }
-        //modifyConstraints()
-
-        super.updateViewConstraints()
-    }
-
-    func setupConstraints() {
+    override func setupConstraints() {
         /**
          NOTE: To observe the effect of leading & trailing attributes, you need to change the OS language setting from a left-to-right language,
          such as English, to a right-to-left language, such as Arabic.

@@ -9,30 +9,24 @@
 import UIKit
 import PureLayout
 
-class PurelayoutExample7ViewController: ExampleViewController {
+class PurelayoutExample7ViewController: BaseViewControllerWithAutolayout {
 
     lazy var blueView: UIView = {
-        let view = UIView.newAutoLayout()
+        let view = UIView().configureForAutoLayout()
         view.backgroundColor = .blue
         return view
     }()
     lazy var redView: UIView = {
-        let view = UIView.newAutoLayout()
+        let view = UIView().configureForAutoLayout()
         view.backgroundColor = .red
         return view
     }()
 
-
-    override func loadView() {
-        super.loadView()
-
-        setupAndComposeView()
-
-        // bootstrap Auto Layout
-        view.setNeedsUpdateConstraints()
+    override var accessibilityIdentifier: String {
+        return "E7"
     }
 
-    func setupAndComposeView() {
+    override func setupAndComposeView() {
         self.title = "7.Animating Constraints"
         view.backgroundColor = UIColor(white: 0.1, alpha: 1.0)
 
@@ -55,17 +49,6 @@ class PurelayoutExample7ViewController: ExampleViewController {
     }
 
 
-    fileprivate var didSetupConstraints = false
-    override func updateViewConstraints() {
-        if (!didSetupConstraints) {
-            didSetupConstraints = true
-            setupConstraints()
-        }
-        modifyConstraints()
-
-        super.updateViewConstraints()
-    }
-
     // Tracks the state of the animation: whether we are animating to the end state (true), or back to the initial state (false)
     var isAnimatingToEndState = true
 
@@ -76,7 +59,7 @@ class PurelayoutExample7ViewController: ExampleViewController {
     let blueViewInitialHeight: CGFloat = 40.0
     let blueViewEndHeight: CGFloat = 100.0
 
-    func setupConstraints() {
+    override func setupConstraints() {
         blueView.autoPin(toTopLayoutGuideOf: self, withInset: 20.0)
         blueView.autoAlignAxis(toSuperviewAxis: .vertical)
 
@@ -88,7 +71,7 @@ class PurelayoutExample7ViewController: ExampleViewController {
         redView.autoAlignAxis(toSuperviewAxis: .vertical)
     }
 
-    func modifyConstraints() {
+    override func modifyConstraints() {
         // Unlike the code above, this is code that will execute every time this method is called.
         // Updating the `constant` property of a constraint is very efficient and can be done without removing/recreating the constraint.
         // Any other changes will require you to remove and re-add new constraints. Make sure to remove constraints before you create new ones!

@@ -336,11 +336,13 @@ Call [super updateViewConstraints] as the final step in your implementation.
 
 
 
-## UIViewController使用Autolayout和Purelayout的最佳实践
+## 使用Autolayout和Purelayout的最佳实践
+
+**UIViewController的继承用法：**
 
 ```swift
-    lazy var tableView: UITableView = {
-        let tableView = UITableView(frame: .zero)
+    lazy var profileTableView: UITableView = {
+        let tableView = UITableView(frame: .zero).configureForAutoLayout("profileTableView")
         ...
         return tableView
     }()
@@ -378,14 +380,13 @@ Call [super updateViewConstraints] as the final step in your implementation.
     }
 ```
 
-
-
-## UIView使用Autolayout和Purelayout的最佳实践
+**UIView继承用法：**
 
 ```swift
    override init(frame: CGRect) {//固定写法
         super.init(frame: frame)
-
+        _ = self.configureForAutoLayout("Main View")
+		
         setupAndComposeView()
 
         // bootstrap Auto Layout
@@ -397,7 +398,7 @@ Call [super updateViewConstraints] as the final step in your implementation.
     }
 
     // Should overritted by subclass, setup view and compose subviews
-    func setupAndComposeView() {
+  override  func setupAndComposeView() {
         // View setup
         //self.backgroundColor = UIColor(white: 0.1, alpha: 1.0)
 
@@ -419,7 +420,7 @@ Call [super updateViewConstraints] as the final step in your implementation.
     }
 
     // invoked only once
-    func setupConstraints() {
+  override      func setupConstraints() {
 
     }
 
@@ -428,6 +429,208 @@ Call [super updateViewConstraints] as the final step in your implementation.
 
     }
 ```
+
+**UIVIew对象生成和初始化配置要点：**
+
+```swift
+   lazy var profileTableView: UITableView = {
+        let tableView = UITableView(frame: .zero).configureForAutoLayout("profileTableView")
+        ...
+        return tableView
+    }()
+```
+
+
+
+```swift
+extension UIView {
+    func configureForAutoLayout(_ accessibilityIdentifier: String? = nil) -> Self {
+        self.translatesAutoresizingMaskIntoConstraints = false;
+        if let accessibilityIdentifier = accessibilityIdentifier {
+            self.accessibilityIdentifier = accessibilityIdentifier
+        }
+        return self
+    }
+    
+    func printConstraints() {
+        self.constraints.forEach { (constraint) in
+            print(String(describing: constraint))
+        }
+    }
+}
+```
+
+**问题讨论：**
+
+在Controller中不能对Controller的View实施：
+
+```
+     _ = self.view.configureForAutoLayout("Main ViewController")
+```
+
+如果追加设置了，则进入Controller后，不能正常获取Frame尺寸，需要在updateViewContrains中追加如下：
+
+```
+	self.view.autoPinEdgesToSuperviewSafeArea()
+```
+
+追加后Controller看似能够正常工作了。
+
+但是在多次调用测试之后，如下Controller切换过程中Controller的行为变得很奇怪：
+
+```
+NavigationController -> main controller -> sub controller
+```
+
+**注意问题**多次由Main Controller切换到Sub Controller，并且回退，起初Controller的行为一切正常，多次之后发现Main Controller在从子Controller回退之后会调用updateViewContrians和viewWillLayoutSubviews这些本不会调用的方法，在模拟器中感觉切换Controller的速度也变慢下来了。
+
+在没有更好的方法之前，**不建议对Controller的View实施Autolayout设置，即translatesAutoresizingMaskIntoConstraints的设置还是缺省为True**（使用**AutoresizingMask**模式），这样保障缺省的Controller View能够正常自己管理他的Frame尺寸。但是对于**View还是要在生成的时候使用configureForAutoLayout("Main ViewController")作为最佳实践坚持。**
+
+```
+使用AutoresizingMask模式的Controller输出的约束：
+<NSLayoutConstraint:0x600001beada0 V:|-(0)-[tableView]   (active, names: tableView:0x7fb7bb86bc00, '|':UIView:0x7fb7bb413950 )>
+<NSLayoutConstraint:0x600001beadf0 H:|-(0)-[tableView]   (active, names: tableView:0x7fb7bb86bc00, '|':UIView:0x7fb7bb413950 )>
+<NSLayoutConstraint:0x600001beae40 tableView.bottom == UIView:0x7fb7bb413950.bottom   (active, names: tableView:0x7fb7bb86bc00 )>
+<NSLayoutConstraint:0x600001beae90 tableView.trailing == UIView:0x7fb7bb413950.trailing   (active, names: tableView:0x7fb7bb86bc00 )>
+<NSLayoutConstraint:0x600001beaf30 'UIView-Encapsulated-Layout-Height' UIView:0x7fb7bb413950.height == 736   (active)>
+<NSAutoresizingMaskLayoutConstraint:0x600001beafd0 h=-&- v=-&- 'UIView-Encapsulated-Layout-Left' UIView:0x7fb7bb413950.minX == 0   (active, names: '|':UIViewControllerWrapperView:0x7fb7bb424440 )>
+<NSAutoresizingMaskLayoutConstraint:0x600001beb020 h=-&- v=-&- 'UIView-Encapsulated-Layout-Top' UIView:0x7fb7bb413950.minY == 0   (active, names: '|':UIViewControllerWrapperView:0x7fb7bb424440 )>
+<NSLayoutConstraint:0x600001beaf80 'UIView-Encapsulated-Layout-Width' UIView:0x7fb7bb413950.width == 414   (active)>
+
+使用translatesAutoresizingMaskIntoConstraints为false和self.view.autoPinEdgesToSuperviewSafeArea()模式的Controller输出的约束：
+<NSLayoutConstraint:0x60000252cc80 V:|-(0)-[tableView]   (active, names: tableView:0x7fa05e050000, main:0x7fa05ed0cb20, '|':main:0x7fa05ed0cb20 )>
+<NSLayoutConstraint:0x60000252ccd0 H:|-(0)-[tableView]   (active, names: tableView:0x7fa05e050000, main:0x7fa05ed0cb20, '|':main:0x7fa05ed0cb20 )>
+<NSLayoutConstraint:0x60000252cd20 tableView.bottom == main.bottom   (active, names: tableView:0x7fa05e050000, main:0x7fa05ed0cb20 )>
+<NSLayoutConstraint:0x60000252cd70 tableView.trailing == main.trailing   (active, names: tableView:0x7fa05e050000, main:0x7fa05ed0cb20 )>
+```
+
+在translatesAutoresizingMaskIntoConstraints为false时self.view.autoPinEdgesToSuperviewSafeArea()执行不执行的区别是画面是否能够正常显示，但是对应Controller的View的约束没有变化，**这个非常奇怪**。
+
+【补充】大概明白了问题出现在什么地方了，self.view.autoPinEdgesToSuperviewSafeArea()是对当前的View进行约束，约束的关系是当前View与其superView之间，形成的约束关系出现了在superView的constraints属性上了，在使用了NavigationController之类的控制器调度后，多个Controller迁移显示的上层superView都是共通的上层Controller的Wrapper，因此做多个Controller中使用translatesAutoresizingMaskIntoConstraints为false时self.view.autoPinEdgesToSuperviewSafeArea()就会对这个上层Controller的Wrapper的View的约束进行混乱。
+
+**【结论再次强调】**作为最佳实践，在Controller及其View，不要试图使用Autolayout对齐直接视图进行管理，老老实实让AutoresizingMask在Controller的View上生成对应Frame尺寸的约束，对Controller的下层View再使用Autolayout模式，即对Controller的subviews都可以使用Autolayout模式，但是对Controller不要使用。
+
+
+
+## 在Xcode中调试Autolayout
+
+需要在`UIViewAlertForUnsatisfiableConstraints`添加`symbolic breakpoint`：
+
+> 1.打开Debug->Breakpoints->Create symbolic breakpoin
+>
+> 2.在`Symbol`中添加`UIViewAlertForUnsatisfiableConstraints`
+>
+> 3.在Action点击Add Action，类型选择`Debugger Command`，内容填写`expr -l objc++ -O -- [[UIWindow keyWindow] _autolayoutTrace]`。
+
+再次出现约束冲突的时候，就可以在终端显示类似如下内容：
+
+```
+UIWindow:0x7fadc950a2e0
+|   UILayoutContainerView:0x7fadc940f3e0
+|   |   UINavigationTransitionView:0x7fadc952bb40
+|   |   |   UIViewControllerWrapperView:0x7fadc9417ff0
+|   |   |   |   •UIView:0x7fadcb048100
+|   |   |   |   |   *<UILayoutGuide: 0x600000cc07e0 - "UIViewLayoutMarginsGuide", layoutFrame = {{20, 64}, {374, 672}}, owningView = <UIView: 0x7fadcb048100; frame = (0 0; 414 736); autoresize = W+H; layer = <CALayer: 0x6000035dca60>>>
+|   |   |   |   |   *UIScrollView:0x7fadca02b800
+|   |   |   |   |   |   *UIStackView:0x7fadcb044f10
+|   |   |   |   |   |   |   *<_UILayoutSpacer: 0x600000ab4960 - "UISV-alignment-spanner", layoutFrame = {{0, 0}, {374, 0}}, owningView = <UIStackView: 0x7fadcb044f10; frame = (0 0; 0 0); layer = <CATransformLayer: 0x6000035dd700>>>- AMBIGUOUS LAYOUT for _UILayoutSpacer:0x600000ab4960'UISV-alignment-spanner'.minY{id: 434}, _UILayoutSpacer:0x600000ab4960'UISV-alignment-spanner'.Height{id: 435}
+|   |   |   |   |   |   |   *UIButton:0x7fadcb02e420'Add Entry'
+|   |   |   |   |   |   |   *UIStackView:0x7fadcb0373f0
+|   |   |   |   |   |   |   |   *<_UILayoutSpacer: 0x600000ab4870 - "UISV-alignment-spanner", layoutFrame = {{0, -4}, {0, 30}}, owningView = <UIStackView: 0x7fadcb0373f0; frame = (0 0; 0 0); tag = 1; layer = <CATransformLayer: 0x6000035dda60>>>- AMBIGUOUS LAYOUT for _UILayoutSpacer:0x600000ab4870'UISV-alignment-spanner'.minX{id: 459}, _UILayoutSpacer:0x600000ab4870'UISV-alignment-spanner'.Width{id: 460}
+|   |   |   |   |   |   |   |   *UILabel:0x7fadcb0312b0'2018/12/13'
+|   |   |   |   |   |   |   |   *UILabel:0x7fadcb033440'1:8FA8-0A06-1464-B59D'
+|   |   |   |   |   |   |   |   *UIButton:0x7fadcb054460'Delete'
+|   |   |   |   |   |   |   |   |   *UIButtonLabel:0x7fadc9530300
+|   |   |   |   |   |   UIImageView:0x7fadc9416120
+|   |   |   |   |   |   UIImageView:0x7fadc9416350
+|   |   Dynamic Stack View:0x7fadc940fa10
+|   |   |   _UIBarBackground:0x7fadc9410310
+|   |   |   |   UIImageView:0x7fadc9410bd0
+|   |   |   |   UIVisualEffectView:0x7fadc9410e00
+|   |   |   |   |   _UIVisualEffectBackdropView:0x7fadc9526670
+|   |   |   |   |   _UIVisualEffectSubview:0x7fadc95296e0
+|   |   |   _UINavigationBarLargeTitleView:0x7fadc94150a0'Dynamic Stack View'
+|   |   |   |   UILabel:0x7fadc9505710
+|   |   |   •_UINavigationBarContentView:0x7fadc940f0c0'Dynamic Stack View'
+|   |   |   |   *<UILayoutGuide: 0x600000ca88c0 - "BackButtonGuide(0x7fadc940f5e0)", layoutFrame = {{0, 0}, {69, 44}}, owningView = <_UINavigationBarContentView: 0x7fadc940f0c0; frame = (0 0; 414 44); layer = <CALayer: 0x60000358bc00>>>
+|   |   |   |   *<UILayoutGuide: 0x600000ca89a0 - "LeadingBarGuide(0x7fadc940f5e0)", layoutFrame = {{75, 0}, {0, 44}}, owningView = <_UINavigationBarContentView: 0x7fadc940f0c0; frame = (0 0; 414 44); layer = <CALayer: 0x60000358bc00>>>
+|   |   |   |   *<UILayoutGuide: 0x600000ca8a80 - "TitleView(0x7fadc940f5e0)", layoutFrame = {{75, 0}, {327, 44}}, owningView = <_UINavigationBarContentView: 0x7fadc940f0c0; frame = (0 0; 414 44); layer = <CALayer: 0x60000358bc00>>>
+|   |   |   |   *<UILayoutGuide: 0x600000ca8b60 - "TrailingBarGuide(0x7fadc940f5e0)", layoutFrame = {{402, 0}, {0, 44}}, owningView = <_UINavigationBarContentView: 0x7fadc940f0c0; frame = (0 0; 414 44); layer = <CALayer: 0x60000358bc00>>>
+|   |   |   |   *<UILayoutGuide: 0x600000ca8c40 - "UIViewLayoutMarginsGuide", layoutFrame = {{20, 0}, {374, 44}}, owningView = <_UINavigationBarContentView: 0x7fadc940f0c0; frame = (0 0; 414 44); layer = <CALayer: 0x60000358bc00>>>
+|   |   |   |   *<UILayoutGuide: 0x600000cbc620 - "UIViewSafeAreaLayoutGuide", layoutFrame = {{0, 0}, {414, 44}}, owningView = <_UINavigationBarContentView: 0x7fadc940f0c0; frame = (0 0; 414 44); layer = <CALayer: 0x60000358bc00>>>
+|   |   |   |   *_UIButtonBarButton:0x7fadc963b760
+|   |   |   |   |   *<UILayoutGuide: 0x600000caa300 - "UIViewLayoutMarginsGuide", layoutFrame = {{0, 16}, {69, 12}}, owningView = <_UIButtonBarButton: 0x7fadc963b760; frame = (0 0; 69 44); layer = <CALayer: 0x6000035c2bc0>>>
+|   |   |   |   |   *_UIModernBarButton:0x7fadc963e490
+|   |   |   |   |   |   UIImageView:0x7fadc95216d0
+|   |   |   |   |   +_UIBackButtonContainerView:0x7fadc96411b0
+|   |   |   |   |   |   *_UIModernBarButton:0x7fadc963cb50'Back'
+|   |   |   |   |   |   |   *UIButtonLabel:0x7fadc963d620'Back'
+|   |   |   |   *UILabel:0x7fadcb0301f0'Dynamic Stack View'
+|   |   |   _UINavigationBarModernPromptView:0x7fadcb030fa0
+|   |   •Toolbar:0x7fadcb000960
+|   |   |   _UIBarBackground:0x7fadc9527c50
+|   |   |   |   UIImageView:0x7fadc952c160
+|   |   |   |   UIVisualEffectView:0x7fadc953c590
+|   |   |   |   |   _UIVisualEffectBackdropView:0x7fadc950d500
+|   |   |   |   |   _UIVisualEffectSubview:0x7fadc95147a0
+|   |   |   +_UIToolbarContentView:0x7fadc9514bb0
+|   |   |   |   *_UIButtonBarStackView:0x7fadc9516f70
+|   |   |   |   |   *<UILayoutGuide: 0x600000cc0620 - "UIViewLayoutMarginsGuide", layoutFrame = {{0, 0}, {414, 44}}, owningView = <_UIButtonBarStackView: 0x7fadc9516f70; frame = (0 0; 414 44); layer = <CALayer: 0x6000035c8c40>>>
+
+Legend:
+	* - is laid out with auto layout
+	+ - is laid out manually, but is represented in the layout engine because translatesAutoresizingMaskIntoConstraints = YES
+	• - layout engine host
+	
+2018-12-13 11:47:05.172711+0800 AutolayoutAndPurelayout[76286:9049824] [LayoutConstraints] Unable to simultaneously satisfy constraints.
+	Probably at least one of the constraints in the following list is one you don't want. 
+	Try this: 
+		(1) look at each constraint and try to figure out which you don't expect; 
+		(2) find the code that added the unwanted constraint or constraints and fix it. 
+(
+    "<NSLayoutConstraint:0x600001691950 UIButton:0x7fadcb02e420'Add Entry'.bottom == UIStackView:0x7fadcb044f10.bottom - 10   (active)>",
+    "<NSLayoutConstraint:0x6000016b1590 'UISV-canvas-connection' V:[UIButton:0x7fadcb02e420'Add Entry']-(0)-|   (active, names: '|':UIStackView:0x7fadcb044f10 )>"
+)
+
+Will attempt to recover by breaking constraint 
+<NSLayoutConstraint:0x600001691950 UIButton:0x7fadcb02e420'Add Entry'.bottom == UIStackView:0x7fadcb044f10.bottom - 10   (active)>
+
+Make a symbolic breakpoint at UIViewAlertForUnsatisfiableConstraints to catch this in the debugger.
+The methods in the UIConstraintBasedLayoutDebugging category on UIView listed in <UIKitCore/UIView.h> may also be helpful.
+```
+
+其中`AMBIGUOUS`相关的视图就是约束有问题的。`0x7f9481c9d990`就是有问题视图的首地址。
+
+当然进一步的调试需要LLDB的命令。比如
+
+打印视图对象：
+
+```
+(lldb) po 0x7f9481c9d990
+<UIView: 0x7f9481c9d990; frame = (0 0; 768 359); autoresize = RM+BM; layer = <CALayer: 0x7fc82d338960>>
+```
+
+改变颜色：
+
+```
+(lldb) expr ((UIView *)0x174197010).backgroundColor = [UIColor redColor]
+(UICachedDeviceRGBColor *) $4 = 0x0000000174469cc0
+```
+
+剩下的就是去代码中找到这个视图，然后修改其约束了。
+
+
+
+
+
+### 必须明确AutoLayout关于更新的几个方法的区别
+
+- setNeedsLayout：告知页面需要更新，但是不会立刻开始更新。执行后会立刻调用layoutSubviews。
+- layoutIfNeeded：告知页面布局立刻更新。所以一般都会和setNeedsLayout一起使用。如果希望立刻生成新的frame需要调用此方法，利用这点一般布局动画可以在更新布局后直接使用这个方法让动画生效。
+- layoutSubviews：系统重写布局
+- setNeedsUpdateConstraints：告知需要更新约束，但是不会立刻开始
+- updateConstraintsIfNeeded：告知立刻更新约束
+- updateConstraints：系统更新约束
 
 
 
@@ -446,3 +649,43 @@ You can override the [`preferredInterfaceOrientationForPresentation`](https://de
 When a rotation occurs for a visible view controller, the [`willRotate(to:duration:)`](https://developer.apple.com/documentation/uikit/uiviewcontroller/1621376-willrotate), [`willAnimateRotation(to:duration:)`](https://developer.apple.com/documentation/uikit/uiviewcontroller/1621458-willanimaterotation), and [`didRotate(from:)`](https://developer.apple.com/documentation/uikit/uiviewcontroller/1621492-didrotate) methods are called during the rotation. The [`viewWillLayoutSubviews()`](https://developer.apple.com/documentation/uikit/uiviewcontroller/1621437-viewwilllayoutsubviews) method is also called after the view is resized and positioned by its parent. If a view controller is not visible when an orientation change occurs, then the rotation methods are never called. However, the [`viewWillLayoutSubviews()`](https://developer.apple.com/documentation/uikit/uiviewcontroller/1621437-viewwilllayoutsubviews) method is called when the view becomes visible. Your implementation of this method can call the [`statusBarOrientation`](https://developer.apple.com/documentation/uikit/uiapplication/1623026-statusbarorientation) method to determine the device orientation.
 
 NoteAt launch time, apps should always set up their interface in a portrait orientation. After the [`application(_:didFinishLaunchingWithOptions:)`](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/1622921-application) method returns, the app uses the view controller rotation mechanism described above to rotate the views to the appropriate orientation prior to showing the window.
+
+
+
+
+
+
+
+```
+
+public extension DispatchQueue {
+    private static var _onceTracker = [String]()
+
+    public class func once(file: String = #file, function: String = #function, line: Int = #line, block: () -> Void) {
+        let token = file + ":" + function + ":" + String(line)
+        once(token: token, block: block)
+    }
+
+    /**
+     Executes a block of code, associated with a unique token, only once.  The code is thread safe and will
+     only execute the code once even in the presence of multithreaded calls.
+     
+     - parameter token: A unique reverse DNS style name such as com.vectorform.<name> or a GUID
+     - parameter block: Block to execute once
+     */
+    public class func once(token: String, block: () -> Void) {
+        objc_sync_enter(self)
+        defer { objc_sync_exit(self) }
+
+
+        if _onceTracker.contains(token) {
+            return
+        }
+
+        _onceTracker.append(token)
+        block()
+    }
+}
+
+```
+

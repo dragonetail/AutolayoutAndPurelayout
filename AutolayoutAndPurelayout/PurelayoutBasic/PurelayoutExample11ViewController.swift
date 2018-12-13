@@ -9,12 +9,12 @@
 import UIKit
 import PureLayout
 
-class PurelayoutExample11ViewController: ExampleViewController {
-    lazy var scrollView  = UIScrollView.newAutoLayout()
+class PurelayoutExample11ViewController: BaseViewControllerWithAutolayout {
+    lazy var scrollView = UIScrollView.newAutoLayout()
     let contentView = UIView.newAutoLayout()
-    
+
     lazy var blueLabel: UILabel = {
-        let label = UILabel.newAutoLayout()
+        let label = UILabel().configureForAutoLayout("blueLabel")
         label.backgroundColor = .blue
         label.numberOfLines = 0
         label.lineBreakMode = .byClipping
@@ -23,46 +23,29 @@ class PurelayoutExample11ViewController: ExampleViewController {
         return label
     }()
 
-    
-    override func loadView() {
-        super.loadView()
-        
-        setupAndComposeView()
-        
-        // bootstrap Auto Layout
-        view.setNeedsUpdateConstraints()
+    override var accessibilityIdentifier: String {
+        return "E11"
     }
-    
-    func setupAndComposeView() {
+
+    override func setupAndComposeView() {
         self.title = "11.Basic UIScrollView"
         view.backgroundColor = UIColor(white: 0.1, alpha: 1.0)
-        
+
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         contentView.addSubview(blueLabel)
     }
-    
-    fileprivate var didSetupConstraints = false
-    override func updateViewConstraints() {
-        if (!didSetupConstraints) {
-            didSetupConstraints = true
-            setupConstraints()
-        }
-        //modifyConstraints()
-        
-        super.updateViewConstraints()
-    }
-    
-    func setupConstraints() {
+
+    override func setupConstraints() {
         scrollView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets.zero)
-        
+
         contentView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets.zero)
         contentView.autoMatch(.width, to: .width, of: view)
-        
+
         blueLabel.autoPinEdge(toSuperviewEdge: .top, withInset: 20)
         blueLabel.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
         blueLabel.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
         blueLabel.autoPinEdge(toSuperviewEdge: .bottom, withInset: 20)
     }
-    
+
 }

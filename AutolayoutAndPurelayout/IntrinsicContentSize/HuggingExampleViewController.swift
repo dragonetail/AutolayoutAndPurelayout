@@ -17,30 +17,25 @@ class IntrinsicSampleView: UIView {
 }
 
 
-class HuggingExampleViewController: ExampleViewController {
+class HuggingExampleViewController: BaseViewControllerWithAutolayout {
     lazy var intrinsicView1: IntrinsicSampleView = {
-        let intrinsicView1 = IntrinsicSampleView()
+        let intrinsicView1 = IntrinsicSampleView().configureForAutoLayout("intrinsicView1")
         intrinsicView1.backgroundColor = UIColor.purple
 
         return intrinsicView1
     }()
     lazy var intrinsicView2: IntrinsicSampleView = {
-        let intrinsicView2 = IntrinsicSampleView()
+        let intrinsicView2 = IntrinsicSampleView().configureForAutoLayout("intrinsicView2")
         intrinsicView2.backgroundColor = UIColor.purple
 
         return intrinsicView2
     }()
 
-    override func loadView() {
-        super.loadView()
-
-        setupAndComposeView()
-
-        // bootstrap Auto Layout
-        view.setNeedsUpdateConstraints()
+    override var accessibilityIdentifier: String {
+        return "Hugging"
     }
 
-    func setupAndComposeView() {
+    override func setupAndComposeView() {
         self.title = "拉伸能力优先级测试"
 
         [intrinsicView1, intrinsicView2].forEach { (subview) in
@@ -48,18 +43,8 @@ class HuggingExampleViewController: ExampleViewController {
         }
     }
 
-    fileprivate var didSetupConstraints = false
-    override func updateViewConstraints() {
-        if (!didSetupConstraints) {
-            didSetupConstraints = true
-            setupConstraints()
-        }
-        //modifyConstraints()
 
-        super.updateViewConstraints()
-    }
-
-    func setupConstraints() {
+    override func setupConstraints() {
         intrinsicView1.autoAlignAxis(toSuperviewAxis: .vertical)
         intrinsicView1.autoPinEdge(toSuperviewSafeArea: .top)
 

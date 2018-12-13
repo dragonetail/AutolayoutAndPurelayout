@@ -9,44 +9,37 @@
 import UIKit
 import PureLayout
 
-class PurelayoutExample8ViewController: ExampleViewController {
+class PurelayoutExample8ViewController: BaseViewControllerWithAutolayout {
     lazy var containerView: UIView = {
-        let view = UIView.newAutoLayout()
+        let view = UIView().configureForAutoLayout()
         view.backgroundColor = .lightGray
         return view
     }()
     lazy var blueView: UIView = {
-        let view = UIView.newAutoLayout()
+        let view = UIView().configureForAutoLayout()
         view.backgroundColor = .blue
         return view
     }()
     lazy var redView: UIView = {
-        let view = UIView.newAutoLayout()
+        let view = UIView().configureForAutoLayout()
         view.backgroundColor = .red
         return view
     }()
     lazy var yellowView: UIView = {
-        let view = UIView.newAutoLayout()
+        let view = UIView().configureForAutoLayout()
         view.backgroundColor = .yellow
         return view
     }()
     lazy var greenView: UIView = {
-        let view = UIView.newAutoLayout()
+        let view = UIView().configureForAutoLayout()
         view.backgroundColor = .green
         return view
     }()
 
-
-    override func loadView() {
-        super.loadView()
-
-        setupAndComposeView()
-
-        // bootstrap Auto Layout
-        view.setNeedsUpdateConstraints()
+    override var accessibilityIdentifier: String {
+        return "E8"
     }
-
-    func setupAndComposeView() {
+    override func setupAndComposeView() {
         self.title = "8.Constraint Identifiers (iOS 7.0+)"
         view.backgroundColor = UIColor(white: 0.1, alpha: 1.0)
 
@@ -56,18 +49,7 @@ class PurelayoutExample8ViewController: ExampleViewController {
         }
     }
 
-    fileprivate var didSetupConstraints = false
-    override func updateViewConstraints() {
-        if (!didSetupConstraints) {
-            didSetupConstraints = true
-            setupConstraints()
-        }
-        //modifyConstraints()
-
-        super.updateViewConstraints()
-    }
-
-    func setupConstraints() {
+    override func setupConstraints() {
         /**
          First, we'll set up some 'good' constraints that work correctly.
          Note that we identify all of the constraints with a short description of what their purpose is - this is a great feature

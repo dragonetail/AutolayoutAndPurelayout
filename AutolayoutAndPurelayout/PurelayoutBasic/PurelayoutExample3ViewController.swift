@@ -9,39 +9,33 @@
 import UIKit
 import PureLayout
 
-class PurelayoutExample3ViewController: ExampleViewController {
+class PurelayoutExample3ViewController: BaseViewControllerWithAutolayout {
     lazy var blueView: UIView = {
-        let view = UIView.newAutoLayout()
+        let view = UIView().configureForAutoLayout()
         view.backgroundColor = .blue
         return view
     }()
     lazy var redView: UIView = {
-        let view = UIView.newAutoLayout()
+        let view = UIView().configureForAutoLayout()
         view.backgroundColor = .red
         return view
     }()
     lazy var yellowView: UIView = {
-        let view = UIView.newAutoLayout()
+        let view = UIView().configureForAutoLayout()
         view.backgroundColor = .yellow
         return view
     }()
     lazy var greenView: UIView = {
-        let view = UIView.newAutoLayout()
+        let view = UIView().configureForAutoLayout()
         view.backgroundColor = .green
         return view
     }()
 
-
-    override func loadView() {
-        super.loadView()
-
-        setupAndComposeView()
-
-        // bootstrap Auto Layout
-        view.setNeedsUpdateConstraints()
+    override var accessibilityIdentifier: String {
+        return "E3"
     }
 
-    func setupAndComposeView() {
+    override func setupAndComposeView() {
         self.title = "3.Distributing Views"
         view.backgroundColor = UIColor(white: 0.1, alpha: 1.0)
 
@@ -50,18 +44,7 @@ class PurelayoutExample3ViewController: ExampleViewController {
         }
     }
 
-    fileprivate var didSetupConstraints = false
-    override func updateViewConstraints() {
-        if (!didSetupConstraints) {
-            didSetupConstraints = true
-            setupConstraints()
-        }
-        //modifyConstraints()
-
-        super.updateViewConstraints()
-    }
-
-    func setupConstraints() {
+    override func setupConstraints() {
         let views: NSArray = [redView, blueView, yellowView, greenView]
 
         // Fix all the heights of the views to 40 pt

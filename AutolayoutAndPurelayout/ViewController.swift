@@ -17,10 +17,10 @@ struct ExampleSection {
 
 struct Example {
     var name: String
-    var exampleViewControllerType: ExampleViewController.Type
+    var exampleViewControllerType: BaseViewControllerWithAutolayout.Type
 }
 
-class ViewController: ExampleViewController {
+class ViewController: BaseViewControllerWithAutolayout {
     static let cellIdentifier = String(describing: UITableViewCell.self)
 
     let exampleSections = [
@@ -28,6 +28,11 @@ class ViewController: ExampleViewController {
             Example(name: "尺寸拉伸", exampleViewControllerType: HuggingExampleViewController.self),
             Example(name: "尺寸压缩", exampleViewControllerType: CompressionExampleViewController.self),
             Example(name: "纯代码布局tablecell", exampleViewControllerType: CodeTableViewController.self)
+        ]),
+        ExampleSection(header: "Apple官方例子", footer: nil, examples: [
+            Example(name: "Dynamic Stack View", exampleViewControllerType: DynamicStackViewController.self),
+            //Example(name: "尺寸压缩", exampleViewControllerType: CompressionExampleViewController.self),
+            //Example(name: "纯代码布局tablecell", exampleViewControllerType: CodeTableViewController.self)
         ]),
         ExampleSection(header: "Purelayout例子", footer: nil, examples: [
             Example(name: "1.Basic Auto Layout", exampleViewControllerType: PurelayoutExample1ViewController.self),
@@ -40,12 +45,14 @@ class ViewController: ExampleViewController {
             Example(name: "8.Constraint Identifiers (iOS 7.0+)", exampleViewControllerType: PurelayoutExample8ViewController.self),
             Example(name: "9.Layout Margins (iOS 8.0+)", exampleViewControllerType: PurelayoutExample9ViewController.self),
             Example(name: "10.Constraints Without Installing", exampleViewControllerType: PurelayoutExample10ViewController.self),
-            Example(name: "11.Basic UIScrollView", exampleViewControllerType: PurelayoutExample11ViewController.self)
+            Example(name: "11.Basic UIScrollView", exampleViewControllerType: PurelayoutExample11ViewController.self),
+            Example(name: "12.Basic Auto Layout with Constraint toggle", exampleViewControllerType: PurelayoutExample12ViewController.self)
+
         ])
     ]
 
     lazy var tableView: UITableView = {
-        let tableView = UITableView(frame: .zero)
+        let tableView = UITableView(frame: .zero).configureForAutoLayout("tableView")
         tableView.dataSource = self
         tableView.delegate = self
 
@@ -57,6 +64,7 @@ class ViewController: ExampleViewController {
 
     override func loadView() {
         super.loadView()
+        _ = self.view.configureForAutoresizingMask("main")
 
         setupAndComposeView()
 
@@ -64,25 +72,17 @@ class ViewController: ExampleViewController {
         view.setNeedsUpdateConstraints()
     }
 
-    func setupAndComposeView() {
+    override var accessibilityIdentifier: String {
+        return "Main"
+    }
 
+    override func setupAndComposeView() {
         self.title = "Example List"
 
         view.addSubview(tableView)
     }
 
-    fileprivate var didSetupConstraints = false
-    override func updateViewConstraints() {
-        if (!didSetupConstraints) {
-            didSetupConstraints = true
-            setupConstraints()
-        }
-        //modifyConstraints()
-
-        super.updateViewConstraints()
-    }
-
-    func setupConstraints() {
+    override func setupConstraints() {
         tableView.autoPinEdgesToSuperviewEdges()
     }
 }
@@ -91,7 +91,6 @@ extension ViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         return exampleSections.count
     }
-
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return exampleSections[section].header
@@ -121,8 +120,8 @@ extension ViewController: UITableViewDelegate {
 
         let exampleViewController = example.exampleViewControllerType.init()
 
-        //self.show(exampleViewController, sender: nil)
+        self.show(exampleViewController, sender: nil)
         //self.present(exampleViewController, animated: false) {
-        self.navigationController?.pushViewController(exampleViewController, animated: false)
+        //self.navigationController?.pushViewController(exampleViewController, animated: false)
     }
 }

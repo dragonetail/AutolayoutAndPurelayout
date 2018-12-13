@@ -36,12 +36,12 @@ struct CellModel {
 
 class CodeLayoutCell: UITableViewCell {
     lazy var cellImageView: UIImageView = {
-        let cellImageView = UIImageView()
+        let cellImageView = UIImageView()//.configureForAutoLayout("cellImageView")
         cellImageView.image = UIImage(named: "kakaxi")
         return cellImageView
     }()
     lazy var nameLabel: UILabel = {
-        let label = UILabel()
+        let label = UILabel()//.configureForAutoLayout("nameLabel")
 
         label.backgroundColor = UIColor.clear
         label.textColor = UIColor.black;
@@ -52,18 +52,20 @@ class CodeLayoutCell: UITableViewCell {
         return label
     }()
     lazy var contentLabel: UILabel = {
-        let label = UILabel()
+        let label = UILabel()//.configureForAutoLayout("contentLabel")
 
         label.backgroundColor = UIColor.clear
         label.textColor = UIColor.black;
         label.font = UIFont.systemFont(ofSize: 12);
         label.lineBreakMode = .byTruncatingTail
+        label.numberOfLines = 0
+        //label.lineBreakMode = .byClipping
         label.textAlignment = .left;
 
         return label
     }()
     lazy var companyLabel: UILabel = {
-        let label = UILabel()
+        let label = UILabel()//.configureForAutoLayout("companyLabel")
 
         label.backgroundColor = UIColor.clear
         label.textColor = UIColor.black;
@@ -76,9 +78,10 @@ class CodeLayoutCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        //_ = self.configureForAutoLayout("CodeLayoutCell")
 
         setupAndComposeView()
-        
+
         // bootstrap Auto Layout
         self.setNeedsUpdateConstraints()
     }
@@ -86,7 +89,7 @@ class CodeLayoutCell: UITableViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     // Should overritted by subclass, setup view and compose subviews
     func setupAndComposeView() {
         [cellImageView, nameLabel, contentLabel, companyLabel].forEach { (subview) in
@@ -101,59 +104,48 @@ class CodeLayoutCell: UITableViewCell {
             setupConstraints()
         }
         //modifyConstraints()
-        
+
         super.updateConstraints()
     }
-    
+
     // invoked only once
     func setupConstraints() {
-        
+
         //图片距左边距离为10，上下居中
         cellImageView.autoPinEdge(toSuperviewEdge: .left, withInset: 10)
         //cellImageView.autoAlignAxis(toSuperviewAxis: .horizontal)
-        cellImageView.autoPinEdge(toSuperviewEdge: .top, withInset: 10, relation: .lessThanOrEqual)
+        cellImageView.autoPinEdge(toSuperviewEdge: .top, withInset: 10)
         cellImageView.autoPinEdge(toSuperviewEdge: .bottom, withInset: 10, relation: .greaterThanOrEqual)
 
         //标题Label,一行显示
-        nameLabel.autoPinEdge(toSuperviewEdge: .right, withInset: 10, relation: .lessThanOrEqual)
-        nameLabel.autoPinEdge(.left, to: .right, of: cellImageView, withOffset: 6)
         nameLabel.autoPinEdge(toSuperviewEdge: .top, withInset: 10)
+        nameLabel.autoPinEdge(.left, to: .right, of: cellImageView, withOffset: 6)
+        nameLabel.autoPinEdge(toSuperviewEdge: .right, withInset: 10, relation: .greaterThanOrEqual)
 
         //内容label,多行显示
-        contentLabel.numberOfLines = 0;
+        contentLabel.autoPinEdge(.top, to: .bottom, of: nameLabel, withOffset: 6)
         contentLabel.autoPinEdge(.left, to: .left, of: nameLabel)
-        contentLabel.autoPinEdge(.top, to: .bottom, of: nameLabel, withOffset: 4)
+        contentLabel.autoPinEdge(toSuperviewEdge: .right, withInset: 10)
 
         //标题Label,一行显示
-        companyLabel.autoPinEdge(.left, to: .left, of: nameLabel)
-        companyLabel.autoPinEdge(toSuperviewEdge: .right, withInset: 10, relation: .lessThanOrEqual)
         companyLabel.autoPinEdge(.top, to: .bottom, of: contentLabel, withOffset: 6)
+        companyLabel.autoPinEdge(.left, to: .left, of: nameLabel)
+        companyLabel.autoPinEdge(toSuperviewEdge: .right, withInset: 10, relation: .greaterThanOrEqual)
         companyLabel.autoPinEdge(toSuperviewEdge: .bottom, withInset: 10, relation: .greaterThanOrEqual)
 
+        // Prevent the two UILabels from being compressed below their intrinsic content height
+        NSLayoutConstraint.autoSetPriority(UILayoutPriority(rawValue: 249)) {
+            self.contentLabel.autoSetContentHuggingPriority(for: .vertical)
+            self.companyLabel.autoSetContentHuggingPriority(for: .vertical)
+        }
 
-        //设置比缺省值小，则容易被拉伸
-        //intrinsicView2.setContentHuggingPriority(UILayoutPriority(rawValue: 249), for: .vertical)
-        //设置比缺省值小，则容易被压缩
-        //label2.setContentCompressionResistancePriority(UILayoutPriority(749), for: .horizontal)
-        //.required == 1000
-        nameLabel.setContentHuggingPriority(.required, for: .vertical)
-        contentLabel.setContentHuggingPriority(.required, for: .vertical)
-        companyLabel.setContentHuggingPriority(.required, for: .vertical)
-
-//        nameLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
-//        contentLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
-//        companyLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
-
-        //UILayoutPriority(rawValue: 250.0) UILayoutPriority(rawValue: 750.0) UILayoutPriority(rawValue: 1000.0) UILayoutPriority(rawValue: 50.0)
-        //print(UILayoutPriority.defaultLow, UILayoutPriority.defaultHigh, UILayoutPriority.required, UILayoutPriority.fittingSizeLevel)
-        cellImageView.setContentHuggingPriority(UILayoutPriority(rawValue: 251), for: .vertical)
-        cellImageView.setContentHuggingPriority(UILayoutPriority(rawValue: 251), for: .horizontal)
-        cellImageView.setContentCompressionResistancePriority(UILayoutPriority(rawValue: 751), for: .vertical)
-        cellImageView.setContentCompressionResistancePriority(UILayoutPriority(rawValue: 751), for: .horizontal)
+        NSLayoutConstraint.autoSetPriority(UILayoutPriority.required) {
+            self.cellImageView.autoSetContentCompressionResistancePriority(for: .horizontal)
+            self.cellImageView.autoSetContentCompressionResistancePriority(for: .vertical)
+        }
     }
 
     override func layoutSubviews() {
-        contentLabel.preferredMaxLayoutWidth = self.contentView.frame.width - 128 - 10 - 6;
         super.layoutSubviews()
     }
 
@@ -164,53 +156,37 @@ class CodeLayoutCell: UITableViewCell {
     }
 }
 
-class CodeTableViewController: ExampleViewController {
+class CodeTableViewController: BaseViewControllerWithAutolayout {
     static let cellIdentifier = String(describing: CodeLayoutCell.self)
 
-    let data: [CellModel] = CellModel.load()
+    var data: [CellModel] = CellModel.load()
 
     lazy var tableView: UITableView = {
-        let tableView = UITableView(frame: .zero)
+        let tableView = UITableView(frame: .zero)//.configureForAutoLayout("tableView")
         tableView.dataSource = self
         tableView.delegate = self
 
         tableView.register(CodeLayoutCell.self, forCellReuseIdentifier: CodeTableViewController.cellIdentifier)
+        //Sure the table view use auto layout
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 44
 
         return tableView
     }()
 
-    override func loadView() {
-        super.loadView()
-
-        setupAndComposeView()
-
-        // bootstrap Auto Layout
-        view.setNeedsUpdateConstraints()
+    override var accessibilityIdentifier: String {
+        return "CodeTableVC"
     }
 
-    func setupAndComposeView() {
+    override func setupAndComposeView() {
         self.title = "纯代码布局tablecell"
 
         view.addSubview(tableView)
     }
 
-    fileprivate var didSetupConstraints = false
-    override func updateViewConstraints() {
-        if (!didSetupConstraints) {
-            didSetupConstraints = true
-            setupConstraints()
-        }
-        //modifyConstraints()
-
-        super.updateViewConstraints()
-    }
-
-    func setupConstraints() {
+    override func setupConstraints() {
         tableView.autoPinEdgesToSuperviewEdges()
     }
-
 }
 
 extension CodeTableViewController: UITableViewDataSource {
@@ -227,66 +203,29 @@ extension CodeTableViewController: UITableViewDataSource {
 
         let model = data[indexPath.row]
         cell.setLabelText(model: model)
+        // Make sure the constraints have been added to this cell, since it may have just been created from scratch
+        //cell.setNeedsUpdateConstraints()
+        //cell.updateConstraintsIfNeeded()
 
         return cell
-    }
-
-    static var sampleCell: CodeLayoutCell?
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        var model = data[indexPath.row]
-        if(model.cacheHeight != 0) {
-            return model.cacheHeight
-        }
-
-
-        DispatchQueue.once {
-            let cell = tableView.dequeueReusableCell(withIdentifier: CodeTableViewController.cellIdentifier) as! CodeLayoutCell //如果追加了indexpath参数，会递归调用heightForRowAt方法
-            CodeTableViewController.sampleCell = cell
-        }
-        guard let cell = CodeTableViewController.sampleCell else {
-            return 0
-        }
-
-
-        cell.layoutIfNeeded()
-        cell.setLabelText(model: model)
-        let size: CGSize = cell.contentView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
-        model.cacheHeight = size.height + 1 ////cell和cell.contentView的高低相差1
-        print("Row: \(indexPath.row) TextLength: \(model.content.count) Height: \(model.cacheHeight)")
-        return model.cacheHeight
     }
 }
 extension CodeTableViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-    }
-}
+        let cell = tableView.cellForRow(at: indexPath) as! CodeLayoutCell
 
-
-public extension DispatchQueue {
-    private static var _onceTracker = [String]()
-
-    public class func once(file: String = #file, function: String = #function, line: Int = #line, block: () -> Void) {
-        let token = file + ":" + function + ":" + String(line)
-        once(token: token, block: block)
-    }
-
-    /**
-     Executes a block of code, associated with a unique token, only once.  The code is thread safe and will
-     only execute the code once even in the presence of multithreaded calls.
-     
-     - parameter token: A unique reverse DNS style name such as com.vectorform.<name> or a GUID
-     - parameter block: Block to execute once
-     */
-    public class func once(token: String, block: () -> Void) {
-        objc_sync_enter(self)
-        defer { objc_sync_exit(self) }
-
-
-        if _onceTracker.contains(token) {
-            return
+        var model = data[indexPath.row]
+        switch Int.random(in: 0...1) {
+        case 0:
+            model.content = model.content +
+                " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Hi, this is a test!!!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Hi, this is a test!!!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Hi, this is a test!!!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Hi, this is a test!!!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        default:
+            model.content = "Hi ~ \(Int.random(in: 1...99999))"
         }
-
-        _onceTracker.append(token)
-        block()
+        //data[indexPath.row] = model
+        tableView.beginUpdates()
+        cell.setLabelText(model: model)
+        tableView.endUpdates()
     }
 }
+

@@ -13,7 +13,7 @@
 		D9FBA2BD21BF80E100D968C9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D9FBA2BB21BF80E100D968C9 /* Main.storyboard */; };
 		D9FBA2BF21BF80E300D968C9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D9FBA2BE21BF80E300D968C9 /* Assets.xcassets */; };
 		D9FBA2C221BF80E300D968C9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D9FBA2C021BF80E300D968C9 /* LaunchScreen.storyboard */; };
-		D9FBA2CD21BFF1D600D968C9 /* ExampleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FBA2CC21BFF1D600D968C9 /* ExampleViewController.swift */; };
+		D9FBA2CD21BFF1D600D968C9 /* BaseViewControllerWithAutolayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FBA2CC21BFF1D600D968C9 /* BaseViewControllerWithAutolayout.swift */; };
 		D9FBA2D021C047F300D968C9 /* HuggingExampleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FBA2CF21C047F300D968C9 /* HuggingExampleViewController.swift */; };
 		D9FBA2D321C048DB00D968C9 /* CompressionExampleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FBA2D221C048DB00D968C9 /* CompressionExampleViewController.swift */; };
 		D9FBA2D521C0B45400D968C9 /* CodeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FBA2D421C0B45400D968C9 /* CodeTableViewController.swift */; };
@@ -30,6 +30,10 @@
 		D9FBA2F121C1436500D968C9 /* PurelayoutExample2ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FBA2E721C1436500D968C9 /* PurelayoutExample2ViewController.swift */; };
 		D9FBA2F221C1436500D968C9 /* PurelayoutExample3ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FBA2E821C1436500D968C9 /* PurelayoutExample3ViewController.swift */; };
 		D9FBA2F421C14A7B00D968C9 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = D9FBA2F321C14A7B00D968C9 /* Localizable.strings */; };
+		D9FBA2F621C1E22E00D968C9 /* PurelayoutExample12ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FBA2F521C1E22E00D968C9 /* PurelayoutExample12ViewController.swift */; };
+		D9FBA2F921C1E80900D968C9 /* DynamicStackViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FBA2F821C1E80900D968C9 /* DynamicStackViewController.swift */; };
+		D9FBA2FB21C2AD1F00D968C9 /* BaseViewWithAutolayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FBA2FA21C2AD1F00D968C9 /* BaseViewWithAutolayout.swift */; };
+		D9FBA2FD21C2B03000D968C9 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FBA2FC21C2B03000D968C9 /* UIView+Extension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,7 +48,7 @@
 		D9FBA2C121BF80E300D968C9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D9FBA2C321BF80E300D968C9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D9FBA2C921BF811F00D968C9 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		D9FBA2CC21BFF1D600D968C9 /* ExampleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleViewController.swift; sourceTree = "<group>"; };
+		D9FBA2CC21BFF1D600D968C9 /* BaseViewControllerWithAutolayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewControllerWithAutolayout.swift; sourceTree = "<group>"; };
 		D9FBA2CF21C047F300D968C9 /* HuggingExampleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HuggingExampleViewController.swift; sourceTree = "<group>"; };
 		D9FBA2D121C0480000D968C9 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		D9FBA2D221C048DB00D968C9 /* CompressionExampleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompressionExampleViewController.swift; sourceTree = "<group>"; };
@@ -62,6 +66,10 @@
 		D9FBA2E721C1436500D968C9 /* PurelayoutExample2ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PurelayoutExample2ViewController.swift; sourceTree = "<group>"; };
 		D9FBA2E821C1436500D968C9 /* PurelayoutExample3ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PurelayoutExample3ViewController.swift; sourceTree = "<group>"; };
 		D9FBA2F321C14A7B00D968C9 /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
+		D9FBA2F521C1E22E00D968C9 /* PurelayoutExample12ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurelayoutExample12ViewController.swift; sourceTree = "<group>"; };
+		D9FBA2F821C1E80900D968C9 /* DynamicStackViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicStackViewController.swift; sourceTree = "<group>"; };
+		D9FBA2FA21C2AD1F00D968C9 /* BaseViewWithAutolayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewWithAutolayout.swift; sourceTree = "<group>"; };
+		D9FBA2FC21C2B03000D968C9 /* UIView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,11 +115,14 @@
 		D9FBA2B621BF80E100D968C9 /* AutolayoutAndPurelayout */ = {
 			isa = PBXGroup;
 			children = (
+				D9FBA2F721C1E7F200D968C9 /* AppleSample */,
 				D9FBA2D821C11CB400D968C9 /* PurelayoutBasic */,
 				D9FBA2CE21C047D900D968C9 /* IntrinsicContentSize */,
 				D9FBA2B721BF80E100D968C9 /* AppDelegate.swift */,
 				D9FBA2B921BF80E100D968C9 /* ViewController.swift */,
-				D9FBA2CC21BFF1D600D968C9 /* ExampleViewController.swift */,
+				D9FBA2CC21BFF1D600D968C9 /* BaseViewControllerWithAutolayout.swift */,
+				D9FBA2FA21C2AD1F00D968C9 /* BaseViewWithAutolayout.swift */,
+				D9FBA2FC21C2B03000D968C9 /* UIView+Extension.swift */,
 				D9FBA2BB21BF80E100D968C9 /* Main.storyboard */,
 				D9FBA2BE21BF80E300D968C9 /* Assets.xcassets */,
 				D9FBA2C021BF80E300D968C9 /* LaunchScreen.storyboard */,
@@ -147,8 +158,17 @@
 				D9FBA2E521C1436500D968C9 /* PurelayoutExample9ViewController.swift */,
 				D9FBA2E221C1436500D968C9 /* PurelayoutExample10ViewController.swift */,
 				D9FBA2E121C1436400D968C9 /* PurelayoutExample11ViewController.swift */,
+				D9FBA2F521C1E22E00D968C9 /* PurelayoutExample12ViewController.swift */,
 			);
 			path = PurelayoutBasic;
+			sourceTree = "<group>";
+		};
+		D9FBA2F721C1E7F200D968C9 /* AppleSample */ = {
+			isa = PBXGroup;
+			children = (
+				D9FBA2F821C1E80900D968C9 /* DynamicStackViewController.swift */,
+			);
+			path = AppleSample;
 			sourceTree = "<group>";
 		};
 		E107168B88B610B9A5C06E10 /* Frameworks */ = {
@@ -288,15 +308,19 @@
 				D9FBA2EC21C1436500D968C9 /* PurelayoutExample10ViewController.swift in Sources */,
 				D9FBA2ED21C1436500D968C9 /* PurelayoutExample7ViewController.swift in Sources */,
 				D9FBA2D021C047F300D968C9 /* HuggingExampleViewController.swift in Sources */,
+				D9FBA2F621C1E22E00D968C9 /* PurelayoutExample12ViewController.swift in Sources */,
 				D9FBA2EF21C1436500D968C9 /* PurelayoutExample9ViewController.swift in Sources */,
 				D9FBA2F121C1436500D968C9 /* PurelayoutExample2ViewController.swift in Sources */,
 				D9FBA2DE21C141D900D968C9 /* PurelayoutExample1ViewController.swift in Sources */,
 				D9FBA2EA21C1436500D968C9 /* PurelayoutExample4ViewController.swift in Sources */,
 				D9FBA2EE21C1436500D968C9 /* PurelayoutExample6ViewController.swift in Sources */,
 				D9FBA2F021C1436500D968C9 /* PurelayoutExample5ViewController.swift in Sources */,
-				D9FBA2CD21BFF1D600D968C9 /* ExampleViewController.swift in Sources */,
+				D9FBA2CD21BFF1D600D968C9 /* BaseViewControllerWithAutolayout.swift in Sources */,
+				D9FBA2FD21C2B03000D968C9 /* UIView+Extension.swift in Sources */,
 				D9FBA2E921C1436500D968C9 /* PurelayoutExample8ViewController.swift in Sources */,
+				D9FBA2FB21C2AD1F00D968C9 /* BaseViewWithAutolayout.swift in Sources */,
 				D9FBA2B821BF80E100D968C9 /* AppDelegate.swift in Sources */,
+				D9FBA2F921C1E80900D968C9 /* DynamicStackViewController.swift in Sources */,
 				D9FBA2F221C1436500D968C9 /* PurelayoutExample3ViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
