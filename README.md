@@ -1,16 +1,26 @@
-#  学习练习Autolayout和Purelayout
+#  Autolayout和Purelayout
 
-## 参考
+## 目标
 
-- https://github.com/PureLayout/PureLayout/wiki/Tips-and-Tricks
+整理和学习Autolayout和Purelayout的概念，梳理关联的例子程序，联系掌握各种实用手法。
 
-- https://www.objc.io/issues/3-views/advanced-auto-layout-toolbox/
+## 例子
 
-- https://www.jianshu.com/p/3a872a0bfe11
+目前整理了Purelayout的官方例子，对于Swift4.2进行了调整，同时针对各种讨论总结整理的最佳实践进行了调整，作为实用Autolayout和Purelayout的参考模板。
 
-- http://www.cocoachina.com/ios/20160229/15455.html
+| 例子                                                         | 说明                                                         |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| [尺寸拉伸](.AutolayoutAndPurelayout/IntrinsicContentSize/HuggingExampleViewController.swift) | 使用 ContentHuggingPriority的例子                            |
+| [尺寸压缩](.AutolayoutAndPurelayout/IntrinsicContentSize/CompressionExampleViewController.swift) | 使用 ContentCompressionResistancePriority的例子              |
+| [Table图片+多行文字](.AutolayoutAndPurelayout/IntrinsicContentSize/CodeTableViewController.swift) | 使用 TableView和定制Cell，构造左侧图片，右侧多行文本，其中一个多行自动计算单元格高度；同时包含了从plist中读取xml数据的示例；以及动态更改TableView中Cell的Label内容，包括高度自动计算。 |
+|                                                              |                                                              |
+|                                                              |                                                              |
+|                                                              |                                                              |
+|                                                              |                                                              |
+|                                                              |                                                              |
+|                                                              |                                                              |
 
-  ​
+
 
 ## Layout处理流程
 
@@ -621,6 +631,28 @@ The methods in the UIConstraintBasedLayoutDebugging category on UIView listed in
 
 
 
+### Adding an Identifier to a Constraint
+
+The log gets a lot easier to understand if you add an identifier to each constraint (`NSLayoutConstraint` has had an identifier property since iOS 7). In Interface Builder find the constraint and add the identifier in the Attributes inspector (I am using $ as a prefix/suffix to make them stand out in the log):
+
+
+
+​        override func viewDidAppear(_ animated: Bool) {
+
+​            print("\(self.title ?? "") viewDidAppear(\(animated))~~~")
+
+​            super.viewDidAppear(animated)
+
+​            self.view.printConstraints()
+
+​            print("...")
+
+​            self.view.superview?.printConstraints()
+
+​            print("\(self.title ?? "") viewDidAppear(\(animated))...")
+
+​        }
+
 
 
 ### 必须明确AutoLayout关于更新的几个方法的区别
@@ -634,6 +666,34 @@ The methods in the UIConstraintBasedLayoutDebugging category on UIView listed in
 
 
 
+
+https://www.jianshu.com/p/d67395deb694
+
+### translatesAutoresizingMaskIntoConstraints
+
+- 把 autoresizingMask 转换为 Constraints
+
+- 即：可以把 frame ，bouds，center 方式布局的视图自动转化为约束形式。（此时该视图上约束已经足够 不需要手动去添加别的约束）
+
+- ### 为什么 translatesAutoresizingMaskIntoConstraints 使用约束布局时候，就要设置为 NO？
+
+  translatesAutoresizingMaskIntoConstraints 的本意是将 frame 布局 自动转化为 约束布局，转化的结果是为这个视图自动添加所有需要的约束，如果我们这时给视图添加自己创建的约束就一定会约束冲突。
+
+  为了避免上面说的约束冲突，我们在代码创建 约束布局 的控件时 直接指定这个视图不能用frame 布局（即translatesAutoresizingMaskIntoConstraints=NO），可以放心的去使用约束了。
+
+
+
+//addButton.autoPinEdge(toSuperviewEdge: .bottom, withInset: 10.0)//追加到StackView中的内容不需要设置上下边界
+
+
+
+关于是否使用UpdateViewConstraints的讨论：
+
+https://github.com/PureLayout/PureLayout/issues/159
+
+https://github.com/PureLayout/PureLayout/issues/143
+
+还有一篇文章，忘了。
 
 
 
@@ -689,3 +749,12 @@ public extension DispatchQueue {
 
 ```
 
+
+
+## 参考
+
+- https://github.com/PureLayout/PureLayout/wiki/Tips-and-Tricks
+- https://www.objc.io/issues/3-views/advanced-auto-layout-toolbox/
+- https://www.jianshu.com/p/3a872a0bfe11
+- http://www.cocoachina.com/ios/20160229/15455.html
+- https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/index.html#//apple_ref/doc/uid/TP40010853-CH7-SW1
