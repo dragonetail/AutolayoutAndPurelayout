@@ -50,7 +50,6 @@
 		D9FBA2C921BF811F00D968C9 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		D9FBA2CC21BFF1D600D968C9 /* BaseViewControllerWithAutolayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewControllerWithAutolayout.swift; sourceTree = "<group>"; };
 		D9FBA2CF21C047F300D968C9 /* HuggingExampleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HuggingExampleViewController.swift; sourceTree = "<group>"; };
-		D9FBA2D121C0480000D968C9 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		D9FBA2D221C048DB00D968C9 /* CompressionExampleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompressionExampleViewController.swift; sourceTree = "<group>"; };
 		D9FBA2D421C0B45400D968C9 /* CodeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeTableViewController.swift; sourceTree = "<group>"; };
 		D9FBA2D621C0BD9B00D968C9 /* SampleData.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = SampleData.plist; sourceTree = "<group>"; };
@@ -138,7 +137,6 @@
 				D9FBA2CF21C047F300D968C9 /* HuggingExampleViewController.swift */,
 				D9FBA2D221C048DB00D968C9 /* CompressionExampleViewController.swift */,
 				D9FBA2D421C0B45400D968C9 /* CodeTableViewController.swift */,
-				D9FBA2D121C0480000D968C9 /* README.md */,
 				D9FBA2D621C0BD9B00D968C9 /* SampleData.plist */,
 			);
 			path = IntrinsicContentSize;

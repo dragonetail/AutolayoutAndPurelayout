@@ -36,12 +36,12 @@ struct CellModel {
 
 class CodeLayoutCell: UITableViewCell {
     lazy var cellImageView: UIImageView = {
-        let cellImageView = UIImageView()//.configureForAutoLayout("cellImageView")
+        let cellImageView = UIImageView().configureForAutoLayout("cellImageView")
         cellImageView.image = UIImage(named: "kakaxi")
         return cellImageView
     }()
     lazy var nameLabel: UILabel = {
-        let label = UILabel()//.configureForAutoLayout("nameLabel")
+        let label = UILabel().configureForAutoLayout("nameLabel")
 
         label.backgroundColor = UIColor.clear
         label.textColor = UIColor.black;
@@ -52,7 +52,7 @@ class CodeLayoutCell: UITableViewCell {
         return label
     }()
     lazy var contentLabel: UILabel = {
-        let label = UILabel()//.configureForAutoLayout("contentLabel")
+        let label = UILabel().configureForAutoLayout("contentLabel")
 
         label.backgroundColor = UIColor.clear
         label.textColor = UIColor.black;
@@ -65,7 +65,7 @@ class CodeLayoutCell: UITableViewCell {
         return label
     }()
     lazy var companyLabel: UILabel = {
-        let label = UILabel()//.configureForAutoLayout("companyLabel")
+        let label = UILabel().configureForAutoLayout("companyLabel")
 
         label.backgroundColor = UIColor.clear
         label.textColor = UIColor.black;
@@ -78,7 +78,7 @@ class CodeLayoutCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        //_ = self.configureForAutoLayout("CodeLayoutCell")
+        _ = self.configureForAutoLayout("CodeLayoutCell")
 
         setupAndComposeView()
 
@@ -162,7 +162,7 @@ class CodeTableViewController: BaseViewControllerWithAutolayout {
     var data: [CellModel] = CellModel.load()
 
     lazy var tableView: UITableView = {
-        let tableView = UITableView(frame: .zero)//.configureForAutoLayout("tableView")
+        let tableView = UITableView(frame: .zero).configureForAutoLayout("tableView")
         tableView.dataSource = self
         tableView.delegate = self
 

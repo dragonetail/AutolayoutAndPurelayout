@@ -40,10 +40,6 @@ class BaseViewControllerWithAutolayout: UIViewController {
             print("\(self.title ?? "") viewDidAppear(\(animated))~~~")
             super.viewDidAppear(animated)
 
-            self.view.printConstraints()
-            print("...")
-            self.view.superview?.printConstraints()
-
             print("\(self.title ?? "") viewDidAppear(\(animated))...")
         }
 
@@ -72,6 +68,11 @@ class BaseViewControllerWithAutolayout: UIViewController {
             print("\(self.title ?? "") viewDidLayoutSubviews~~~")
             super.viewDidLayoutSubviews()
 
+            //print(self.view.value(forKey: "_autolayoutTrace"))
+            self.view.printConstraints()
+            //print("...")
+            //self.view.superview?.printConstraints()
+            
             print("\(self.title ?? "") viewDidLayoutSubviews...")
         }
 

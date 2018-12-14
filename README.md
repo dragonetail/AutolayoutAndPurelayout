@@ -4,6 +4,10 @@
 
 整理和学习Autolayout和Purelayout的概念，梳理关联的例子程序，联系掌握各种实用手法。
 
+
+
+------
+
 ## 例子
 
 目前整理了Purelayout的官方例子，对于Swift4.2进行了调整，同时针对各种讨论总结整理的最佳实践进行了调整，作为实用Autolayout和Purelayout的参考模板。
@@ -29,7 +33,246 @@
 
 
 
-## Layout处理流程基础概念
+------
+
+## 使用Autolayout和Purelayout的最佳实践
+
+构建UIViewController和UIView使用Purelayout的最佳模板，主要针对初始化和约束部分进行。
+
+### UIViewController的最佳实践
+
+1、在Controller及其View，由于系统已经在布局尺寸上进行了合理化处理，不要试图使用Autolayout对齐直接视图进行管理，老老实实让AutoresizingMask在Controller的View上生成对应Frame尺寸的约束，对Controller的下层View再使用Autolayout模式，即对Controller的subviews都可以使用Autolayout模式，但是对Controller不要使用。
+
+2、在onload初始化时需要设置translatesAutoresizingMaskIntoConstraints为True明确对AutoresizingMask模式进行配置。
+
+3、同时设置accessibilityIdentifier，约束输出信息的显示的可阅读性。关于accessibilityIdentifier的设置方法，可以使用本地化只读计算变量进行设置，参见[BaseViewControllerWithAutolayout.swift](./AutolayoutAndPurelayout/BaseViewControllerWithAutolayout.swift)。
+
+上面2和3的部分可以参见如下扩展代码实现，调用位置，应该在onload方法super.onload()调用后，参见[BaseViewControllerWithAutolayout.swift](./AutolayoutAndPurelayout/BaseViewControllerWithAutolayout.swift)
+
+```swift
+extension UIView {
+    func configureForAutoresizingMask(_ accessibilityIdentifier: String? = nil) -> Self {
+        self.translatesAutoresizingMaskIntoConstraints = true;
+        if let accessibilityIdentifier = accessibilityIdentifier {
+            self.accessibilityIdentifier = accessibilityIdentifier
+        }
+        return self
+    }
+}
+
+```
+
+4、在onload()结束之后，应该调用view.setNeedsUpdateConstraints()方法激活Autolayout模式，让视图在显示环节调用updateViewConstraints()计算约束。
+
+5、对updateViewConstraints()进行实现，通过变量进行初始化约束设置和变化更新约束设置，参见[BaseViewControllerWithAutolayout.swift](./AutolayoutAndPurelayout/BaseViewControllerWithAutolayout.swift)。
+
+6、在updateViewConstraints()最后调用 super.updateViewConstraints()执行约束的验证和计算。
+
+7、在需要的地方，例如viewDidLayoutSubviews()中打印当前视图和父视图的约束信息，或者添加print(self.view.value(forKey: "_autolayoutTrace"))打印视图调用堆栈信息。
+
+8、如果继承基础的UIViewController，建议使用[BaseViewControllerWithAutolayout.swift](./AutolayoutAndPurelayout/BaseViewControllerWithAutolayout.swift)，直接集成了上面的最佳实践内容和调试内容。
+
+9、Controller中SubView，在构造结束后，统一使用configureForAutoLayout("blueView")设置translatesAutoresizingMaskIntoConstraints为False同时设置约束显示时SubView的ID。
+
+configureForAutoLayout()的定义：
+
+```swift
+extension UIView {
+    func configureForAutoLayout(_ accessibilityIdentifier: String? = nil) -> Self {
+        self.translatesAutoresizingMaskIntoConstraints = false;
+        if let accessibilityIdentifier = accessibilityIdentifier {
+            self.accessibilityIdentifier = accessibilityIdentifier
+        }
+        return self
+    }
+}
+```
+
+10、继承[BaseViewControllerWithAutolayout.swift](./AutolayoutAndPurelayout/BaseViewControllerWithAutolayout.swift)的Controller主要内容示例如下：
+
+```swift
+class PurelayoutExample1ViewController: BaseViewControllerWithAutolayout {
+    lazy var blueView: UIView = {
+        let view = UIView().configureForAutoLayout("blueView")
+        view.backgroundColor = .blue
+        return view
+    }()
+    ...
+    
+    override var accessibilityIdentifier: String {
+        return "E1" //定义UIViewController的View的约束ID
+    }
+
+    override func setupAndComposeView() {
+        self.title = "Basic Auto Layout"
+        view.backgroundColor = UIColor(white: 0.1, alpha: 1.0)
+
+        [blueView, redView, yellowView, greenView].forEach { (subview) in
+            view.addSubview(subview)
+        }
+    }
+
+    override func setupConstraints() {
+        blueView.autoCenterInSuperview()
+  		...
+    }
+```
+
+
+
+### UIView的最佳实践
+
+1、在Controller中使用构建的SubView，需要依据Controller的第9个最佳实践规则调用configureForAutoLayout("blueView")进行Autolyout初始化的ID设置。
+
+2、对于继承UIView类的子类封装，可以参考BaseViewWithAutolayout.swift的实现进行：
+
+也可以参考例子[Table图片+多行文字](https://github.com/dragonetail/AutolayoutAndPurelayout/blob/master/AutolayoutAndPurelayout/IntrinsicContentSize/CodeTableViewController.swift)的实现。
+
+```swift
+class BaseViewWithAutolayout: UIView {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        _ = self.configureForAutoLayout("BaseViewWAL")
+
+        setupAndComposeView()
+
+        // bootstrap Auto Layout
+        self.setNeedsUpdateConstraints()
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // Should overritted by subclass, setup view and compose subviews
+    func setupAndComposeView() {
+    }
+
+    fileprivate var didSetupConstraints = false
+    override func updateConstraints() {
+        if (!didSetupConstraints) {
+            didSetupConstraints = true
+            setupConstraints()
+        }
+        modifyConstraints()
+
+        super.updateConstraints()
+    }
+
+    // invoked only once
+    func setupConstraints() {
+    }
+    func modifyConstraints() {
+    }
+}
+```
+
+
+
+
+
+------
+
+## Autolayout调试
+
+### 视图堆栈
+
+使用下面语句可以打印视图堆栈。
+
+```swift
+在程序中
+print(self.view.value(forKey: "_autolayoutTrace"))
+或者在中断时，lldb窗口
+po print(self.view.value(forKey: "_autolayoutTrace"))
+或者在中断时，在lldb窗口
+expr -l objc++ -O -- [[UIWindow keyWindow] _autolayoutTrace]
+```
+
+### 打印Contraints内容
+
+使用下面语句可以打印视图的约束内容。
+
+```swift
+在程序中
+self.view.printConstraints()
+self.view.superview?.printConstraints()
+或者在中断时，lldb窗口
+po self.view.printConstraints()
+po self.view.superview?.printConstraints()
+```
+
+printConstraints()的实现，参见UIView+Extension.swift
+
+```swift
+extension UIView {
+    func printConstraints() {
+        #if DEBUG
+        self.constraints.forEach { (constraint) in
+            print(String(describing: constraint))
+        }
+        #endif
+    }
+    
+    func roundBorder(_ color: UIColor = UIColor.purple) {
+        layer.borderWidth = 1
+        layer.borderColor = color.cgColor
+        layer.cornerRadius = 3
+        clipsToBounds = true
+    }
+}
+```
+
+### 空间边框辅助调试
+
+对于问题View使用上面UIView扩展的roundBorder，添加在代码中既可以方便在画面上对需要的视图添加边框方便调试。
+
+### 模拟执行layout
+
+可以配合setNeedsUpdateConstraints使用。
+
+```swift
+或者或者在中断时，在lldb窗口，执行如下命令，会尝试重新Layout调用。
+(lldb) po self.view.exerciseAmbiguityInLayout()
+10.Constraints Without Installing viewWillLayoutSubviews~~~
+10.Constraints Without Installing viewWillLayoutSubviews...
+10.Constraints Without Installing viewDidLayoutSubviews~~~
+10.Constraints Without Installing viewDidLayoutSubviews...
+(lldb) po self.view.setNeedsUpdateConstraints()
+(lldb) po self.view.exerciseAmbiguityInLayout()
+10.Constraints Without Installing viewWillLayoutSubviews~~~
+10.Constraints Without Installing viewWillLayoutSubviews...
+10.Constraints Without Installing updateViewConstraints~~~
+10.Constraints Without Installing modifyConstraints.
+10.Constraints Without Installing updateViewConstraints...
+10.Constraints Without Installing viewDidLayoutSubviews~~~
+10.Constraints Without Installing viewDidLayoutSubviews...
+```
+
+### 在Xcode中，当Autolayout出现冲突是添加中断
+
+需要在`UIViewAlertForUnsatisfiableConstraints`添加`symbolic breakpoint`：
+
+> 1.打开Debug->Breakpoints->Create symbolic breakpoin
+>
+> 2.在`Symbol`中添加`UIViewAlertForUnsatisfiableConstraints`
+>
+> 3.在Action点击Add Action，类型选择`Debugger Command`，内容填写`expr -l objc++ -O -- [[UIWindow keyWindow] _autolayoutTrace]`。
+
+再次出现约束冲突的时候，就可以在终端显示视图堆栈，也可以在中断时执行其他动作进一步处理。
+
+### 在代码实现的时候，对View添加accessibilityIdentifier提升调试信息可读性
+
+具体参见最佳实践章节。
+
+### 在代码实现的时候，对约束添加Identifier提升调试信息可读性
+
+具体参见示例[8.Constraint Identifiers (iOS 7.0+)](https://github.com/dragonetail/AutolayoutAndPurelayout/blob/master/AutolayoutAndPurelayout/PurelayoutBasic/PurelayoutExample8ViewController.swift)。
+
+
+
+------
+
+## Autolayout处理流程基础概念
 
 Auto Layout追加了两个步骤在视图显示的过程中：updating constraints（约束更新） and laying out views（视图布局）。整个过程行程了依赖处理链条，视图显示依赖视图布局、布局依赖约束更新。
 
@@ -124,6 +367,8 @@ V:[label(>=30@750)]
 
 需要说明的是，显示、布局是top-down，约束更新时bottom-up的。
 
+
+
 #### 本地约束（Local Constraints）
 
 UIView的[`requiresConstraintBasedLayout`](https://developer.apple.com/library/mac/documentation/Cocoa/Reference/ApplicationKit/Classes/NSView_Class/Reference/NSView.html#//apple_ref/occ/clm/NSView/requiresConstraintBasedLayout) 控制使用约束方式进行布局，目前已经强制为true。
@@ -133,6 +378,8 @@ UIView的[`requiresConstraintBasedLayout`](https://developer.apple.com/library/m
 在这个步骤中，你不能无效（invalidate）任何约束，因为这一步是由layout process发起的，系统会报告程序错误。（这句话有点问题，待考究。）
 
 如果一些约束需要更改（invalidate），你应该在需要的地方，例如按钮的响应事件中，尽快删除对应的约束，并且调用 [`setNeedsUpdateConstraints`](http://developer.apple.com/library/ios/documentation/UIKit/Reference/UIView_Class/UIView/UIView.html#//apple_ref/occ/instm/UIView/setNeedsUpdateConstraints)。（参考最佳实践章节的思路，这个作为第三方建议，不作为最佳实践采用。）
+
+
 
 #### 控制子视图的布局（Control Layout of Subviews）
 
@@ -212,65 +459,10 @@ UIView的[`requiresConstraintBasedLayout`](https://developer.apple.com/library/m
 
 动画根据约束的控制实现方式不同，请参照示例：
 
-
-
-
-
-
-
-### 调试
-
-使用下面语句可以打印视图堆栈。
-
-```swift
-print(self.view.value(forKey: "_autolayoutTrace"))
-```
-
-用下面这两个语句可以获取和打印当前面视图影响的约束。
-
-```swift
-print(self.view.constraintsAffectingLayout())
-print(self.view.constraintsAffectingLayoutForAxis())
-```
-
-
-
-Another more visual way to spot ambiguous layouts is to use `exerciseAmbiguityInLayout`. This will randomly change the view’s frame between valid values. However, calling this method once will also just change the frame once. So chances are that you will not see this change at all when you start your app. It’s a good idea to create a helper method which traverses through the whole view hierarchy and makes all views that have an ambiguous layout “jiggle.”
-
-```
-@implementation UIView (AutoLayoutDebugging)
-- (void)exerciseAmbiguityInLayoutRepeatedly:(BOOL)recursive
-{
-    #ifdef DEBUG
-    if (self.hasAmbiguousLayout) {
-        [NSTimer scheduledTimerWithTimeInterval:.5 
-                                         target:self 
-                                       selector:@selector(exerciseAmbiguityInLayout) 
-                                       userInfo:nil 
-                                        repeats:YES];
-    }
-    if (recursive) {
-        for (UIView *subview in self.subviews) {
-            [subview exerciseAmbiguityInLayoutRepeatedly:YES];
-        }
-    }
-    #endif
-}
-@end
-```
-
-
-
-
-
-## 参考
-- https://github.com/PureLayout/PureLayout/wiki/Tips-and-Tricks
-- https://www.objc.io/issues/3-views/advanced-auto-layout-toolbox/
-
-
-
-
-
+- [Table图片+多行文字](https://github.com/dragonetail/AutolayoutAndPurelayout/blob/master/AutolayoutAndPurelayout/IntrinsicContentSize/CodeTableViewController.swift)
+- [7.Animating Constraints](https://github.com/dragonetail/AutolayoutAndPurelayout/blob/master/AutolayoutAndPurelayout/PurelayoutBasic/PurelayoutExample7ViewController.swift)
+- [10.Constraints Without Installing](https://github.com/dragonetail/AutolayoutAndPurelayout/blob/master/AutolayoutAndPurelayout/PurelayoutBasic/PurelayoutExample10ViewController.swift)
+- [12.Basic Auto Layout with Constraint toggle](https://github.com/dragonetail/AutolayoutAndPurelayout/blob/master/AutolayoutAndPurelayout/PurelayoutBasic/PurelayoutExample12ViewController.swift)
 
 
 
@@ -278,7 +470,7 @@ Another more visual way to spot ambiguous layouts is to use `exerciseAmbiguityIn
 
 UIViewController的启动过程，如下可以被重载定制的方法和行为的调用顺序：
 
-```
+```swift
 0、loadView()    # 构建View图层，追加subviews元素，设置controller基础信息例如title，设置controller的view属性
 -->
 1、viewDidLoad()
@@ -314,131 +506,32 @@ Call [super updateViewConstraints] as the final step in your implementation.
 
 
 
-## 使用Autolayout和Purelayout的最佳实践
+### translatesAutoresizingMaskIntoConstraints的作用
 
-**UIViewController的继承用法：**
+参考： https://www.jianshu.com/p/d67395deb694
 
-```swift
-    lazy var profileTableView: UITableView = {
-        let tableView = UITableView(frame: .zero).configureForAutoLayout("profileTableView")
-        ...
-        return tableView
-    }()
+- 把 autoresizingMask 转换为 Constraints
+- 即：可以把 frame ，bouds，center 方式布局的视图自动转化为约束形式。（此时该视图上约束已经足够 不需要手动去添加别的约束）
 
+### 为什么 translatesAutoresizingMaskIntoConstraints 使用约束布局时候，就要设置为 NO？
 
-    override func loadView() { //固定写法
-        super.loadView()
-        
-        setupAndComposeView()
-        
-        // bootstrap Auto Layout
-        view.setNeedsUpdateConstraints()
-    }
-    
-    override func setupAndComposeView() {
-        super.setupAndComposeView()
-        
-        self.title = "Example List"
+translatesAutoresizingMaskIntoConstraints 的本意是将 frame 布局 自动转化为 约束布局，转化的结果是为这个视图自动添加所有需要的约束，如果我们这时给视图添加自己创建的约束就一定会约束冲突。
 
-        view.addSubview(tableView)
-    }
+为了避免上面说的约束冲突，我们在代码创建 约束布局 的控件时 直接指定这个视图不能用frame 布局（即translatesAutoresizingMaskIntoConstraints=NO），可以放心的去使用约束了。
 
-    fileprivate var didSetupConstraints = false
-    override func updateViewConstraints() { //固定写法
-        if (!didSetupConstraints) {
-            setupConstraints()
-        }
-        //modifyConstraints()
-        
-        super.updateViewConstraints()
-    }
-    
-    override func setupConstraints() {
-        tableView.autoPinEdgesToSuperviewEdges()
-    }
-```
+### 关于是否使用UpdateViewConstraints的讨论：
 
-**UIView继承用法：**
+https://github.com/PureLayout/PureLayout/issues/159
 
-```swift
-   override init(frame: CGRect) {//固定写法
-        super.init(frame: frame)
-        _ = self.configureForAutoLayout("Main View")
-		
-        setupAndComposeView()
+https://github.com/PureLayout/PureLayout/issues/143
 
-        // bootstrap Auto Layout
-        self.setNeedsUpdateConstraints()
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    // Should overritted by subclass, setup view and compose subviews
-  override  func setupAndComposeView() {
-        // View setup
-        //self.backgroundColor = UIColor(white: 0.1, alpha: 1.0)
-
-        // Compose subviews
-        //[label1, label2].forEach { (subview) in
-        //    self.addSubview(subview)
-        //}
-    }
-
-
-    fileprivate var didSetupConstraints = false
-    override func updateConstraints() {//固定写法
-        if (!didSetupConstraints) {
-            setupConstraints()
-        }
-        modifyConstraints()
-
-        super.updateConstraints()
-    }
-
-    // invoked only once
-  override      func setupConstraints() {
-
-    }
-
-    // invoked every times when trigged by setNeedsUpdateConstraints()
-    func modifyConstraints() {
-
-    }
-```
-
-**UIVIew对象生成和初始化配置要点：**
-
-```swift
-   lazy var profileTableView: UITableView = {
-        let tableView = UITableView(frame: .zero).configureForAutoLayout("profileTableView")
-        ...
-        return tableView
-    }()
-```
+还有几篇也不错的文章，忘了参考地址了。
 
 
 
-```swift
-extension UIView {
-    func configureForAutoLayout(_ accessibilityIdentifier: String? = nil) -> Self {
-        self.translatesAutoresizingMaskIntoConstraints = false;
-        if let accessibilityIdentifier = accessibilityIdentifier {
-            self.accessibilityIdentifier = accessibilityIdentifier
-        }
-        return self
-    }
-    
-    func printConstraints() {
-        self.constraints.forEach { (constraint) in
-            print(String(describing: constraint))
-        }
-    }
-}
-```
 
-**问题讨论：**
+
+### 参考：UIViewController在Autolayout初始化上的问题辨析：
 
 在Controller中不能对Controller的View实施：
 
@@ -490,193 +583,27 @@ NavigationController -> main controller -> sub controller
 
 
 
-## 在Xcode中调试Autolayout
 
-需要在`UIViewAlertForUnsatisfiableConstraints`添加`symbolic breakpoint`：
 
-> 1.打开Debug->Breakpoints->Create symbolic breakpoin
->
-> 2.在`Symbol`中添加`UIViewAlertForUnsatisfiableConstraints`
->
-> 3.在Action点击Add Action，类型选择`Debugger Command`，内容填写`expr -l objc++ -O -- [[UIWindow keyWindow] _autolayoutTrace]`。
+------
 
-再次出现约束冲突的时候，就可以在终端显示类似如下内容：
+## 小技巧
+
+### UIStackView使用Autolaylout的时候不行看设置上下边界
+
+例如，如下代码会出现冲突
 
 ```
-UIWindow:0x7fadc950a2e0
-|   UILayoutContainerView:0x7fadc940f3e0
-|   |   UINavigationTransitionView:0x7fadc952bb40
-|   |   |   UIViewControllerWrapperView:0x7fadc9417ff0
-|   |   |   |   •UIView:0x7fadcb048100
-|   |   |   |   |   *<UILayoutGuide: 0x600000cc07e0 - "UIViewLayoutMarginsGuide", layoutFrame = {{20, 64}, {374, 672}}, owningView = <UIView: 0x7fadcb048100; frame = (0 0; 414 736); autoresize = W+H; layer = <CALayer: 0x6000035dca60>>>
-|   |   |   |   |   *UIScrollView:0x7fadca02b800
-|   |   |   |   |   |   *UIStackView:0x7fadcb044f10
-|   |   |   |   |   |   |   *<_UILayoutSpacer: 0x600000ab4960 - "UISV-alignment-spanner", layoutFrame = {{0, 0}, {374, 0}}, owningView = <UIStackView: 0x7fadcb044f10; frame = (0 0; 0 0); layer = <CATransformLayer: 0x6000035dd700>>>- AMBIGUOUS LAYOUT for _UILayoutSpacer:0x600000ab4960'UISV-alignment-spanner'.minY{id: 434}, _UILayoutSpacer:0x600000ab4960'UISV-alignment-spanner'.Height{id: 435}
-|   |   |   |   |   |   |   *UIButton:0x7fadcb02e420'Add Entry'
-|   |   |   |   |   |   |   *UIStackView:0x7fadcb0373f0
-|   |   |   |   |   |   |   |   *<_UILayoutSpacer: 0x600000ab4870 - "UISV-alignment-spanner", layoutFrame = {{0, -4}, {0, 30}}, owningView = <UIStackView: 0x7fadcb0373f0; frame = (0 0; 0 0); tag = 1; layer = <CATransformLayer: 0x6000035dda60>>>- AMBIGUOUS LAYOUT for _UILayoutSpacer:0x600000ab4870'UISV-alignment-spanner'.minX{id: 459}, _UILayoutSpacer:0x600000ab4870'UISV-alignment-spanner'.Width{id: 460}
-|   |   |   |   |   |   |   |   *UILabel:0x7fadcb0312b0'2018/12/13'
-|   |   |   |   |   |   |   |   *UILabel:0x7fadcb033440'1:8FA8-0A06-1464-B59D'
-|   |   |   |   |   |   |   |   *UIButton:0x7fadcb054460'Delete'
-|   |   |   |   |   |   |   |   |   *UIButtonLabel:0x7fadc9530300
-|   |   |   |   |   |   UIImageView:0x7fadc9416120
-|   |   |   |   |   |   UIImageView:0x7fadc9416350
-|   |   Dynamic Stack View:0x7fadc940fa10
-|   |   |   _UIBarBackground:0x7fadc9410310
-|   |   |   |   UIImageView:0x7fadc9410bd0
-|   |   |   |   UIVisualEffectView:0x7fadc9410e00
-|   |   |   |   |   _UIVisualEffectBackdropView:0x7fadc9526670
-|   |   |   |   |   _UIVisualEffectSubview:0x7fadc95296e0
-|   |   |   _UINavigationBarLargeTitleView:0x7fadc94150a0'Dynamic Stack View'
-|   |   |   |   UILabel:0x7fadc9505710
-|   |   |   •_UINavigationBarContentView:0x7fadc940f0c0'Dynamic Stack View'
-|   |   |   |   *<UILayoutGuide: 0x600000ca88c0 - "BackButtonGuide(0x7fadc940f5e0)", layoutFrame = {{0, 0}, {69, 44}}, owningView = <_UINavigationBarContentView: 0x7fadc940f0c0; frame = (0 0; 414 44); layer = <CALayer: 0x60000358bc00>>>
-|   |   |   |   *<UILayoutGuide: 0x600000ca89a0 - "LeadingBarGuide(0x7fadc940f5e0)", layoutFrame = {{75, 0}, {0, 44}}, owningView = <_UINavigationBarContentView: 0x7fadc940f0c0; frame = (0 0; 414 44); layer = <CALayer: 0x60000358bc00>>>
-|   |   |   |   *<UILayoutGuide: 0x600000ca8a80 - "TitleView(0x7fadc940f5e0)", layoutFrame = {{75, 0}, {327, 44}}, owningView = <_UINavigationBarContentView: 0x7fadc940f0c0; frame = (0 0; 414 44); layer = <CALayer: 0x60000358bc00>>>
-|   |   |   |   *<UILayoutGuide: 0x600000ca8b60 - "TrailingBarGuide(0x7fadc940f5e0)", layoutFrame = {{402, 0}, {0, 44}}, owningView = <_UINavigationBarContentView: 0x7fadc940f0c0; frame = (0 0; 414 44); layer = <CALayer: 0x60000358bc00>>>
-|   |   |   |   *<UILayoutGuide: 0x600000ca8c40 - "UIViewLayoutMarginsGuide", layoutFrame = {{20, 0}, {374, 44}}, owningView = <_UINavigationBarContentView: 0x7fadc940f0c0; frame = (0 0; 414 44); layer = <CALayer: 0x60000358bc00>>>
-|   |   |   |   *<UILayoutGuide: 0x600000cbc620 - "UIViewSafeAreaLayoutGuide", layoutFrame = {{0, 0}, {414, 44}}, owningView = <_UINavigationBarContentView: 0x7fadc940f0c0; frame = (0 0; 414 44); layer = <CALayer: 0x60000358bc00>>>
-|   |   |   |   *_UIButtonBarButton:0x7fadc963b760
-|   |   |   |   |   *<UILayoutGuide: 0x600000caa300 - "UIViewLayoutMarginsGuide", layoutFrame = {{0, 16}, {69, 12}}, owningView = <_UIButtonBarButton: 0x7fadc963b760; frame = (0 0; 69 44); layer = <CALayer: 0x6000035c2bc0>>>
-|   |   |   |   |   *_UIModernBarButton:0x7fadc963e490
-|   |   |   |   |   |   UIImageView:0x7fadc95216d0
-|   |   |   |   |   +_UIBackButtonContainerView:0x7fadc96411b0
-|   |   |   |   |   |   *_UIModernBarButton:0x7fadc963cb50'Back'
-|   |   |   |   |   |   |   *UIButtonLabel:0x7fadc963d620'Back'
-|   |   |   |   *UILabel:0x7fadcb0301f0'Dynamic Stack View'
-|   |   |   _UINavigationBarModernPromptView:0x7fadcb030fa0
-|   |   •Toolbar:0x7fadcb000960
-|   |   |   _UIBarBackground:0x7fadc9527c50
-|   |   |   |   UIImageView:0x7fadc952c160
-|   |   |   |   UIVisualEffectView:0x7fadc953c590
-|   |   |   |   |   _UIVisualEffectBackdropView:0x7fadc950d500
-|   |   |   |   |   _UIVisualEffectSubview:0x7fadc95147a0
-|   |   |   +_UIToolbarContentView:0x7fadc9514bb0
-|   |   |   |   *_UIButtonBarStackView:0x7fadc9516f70
-|   |   |   |   |   *<UILayoutGuide: 0x600000cc0620 - "UIViewLayoutMarginsGuide", layoutFrame = {{0, 0}, {414, 44}}, owningView = <_UIButtonBarStackView: 0x7fadc9516f70; frame = (0 0; 414 44); layer = <CALayer: 0x6000035c8c40>>>
-
-Legend:
-	* - is laid out with auto layout
-	+ - is laid out manually, but is represented in the layout engine because translatesAutoresizingMaskIntoConstraints = YES
-	• - layout engine host
-	
-2018-12-13 11:47:05.172711+0800 AutolayoutAndPurelayout[76286:9049824] [LayoutConstraints] Unable to simultaneously satisfy constraints.
-	Probably at least one of the constraints in the following list is one you don't want. 
-	Try this: 
-		(1) look at each constraint and try to figure out which you don't expect; 
-		(2) find the code that added the unwanted constraint or constraints and fix it. 
-(
-    "<NSLayoutConstraint:0x600001691950 UIButton:0x7fadcb02e420'Add Entry'.bottom == UIStackView:0x7fadcb044f10.bottom - 10   (active)>",
-    "<NSLayoutConstraint:0x6000016b1590 'UISV-canvas-connection' V:[UIButton:0x7fadcb02e420'Add Entry']-(0)-|   (active, names: '|':UIStackView:0x7fadcb044f10 )>"
-)
-
-Will attempt to recover by breaking constraint 
-<NSLayoutConstraint:0x600001691950 UIButton:0x7fadcb02e420'Add Entry'.bottom == UIStackView:0x7fadcb044f10.bottom - 10   (active)>
-
-Make a symbolic breakpoint at UIViewAlertForUnsatisfiableConstraints to catch this in the debugger.
-The methods in the UIConstraintBasedLayoutDebugging category on UIView listed in <UIKitCore/UIView.h> may also be helpful.
-```
-
-其中`AMBIGUOUS`相关的视图就是约束有问题的。`0x7f9481c9d990`就是有问题视图的首地址。
-
-当然进一步的调试需要LLDB的命令。比如
-
-打印视图对象：
-
-```
-(lldb) po 0x7f9481c9d990
-<UIView: 0x7f9481c9d990; frame = (0 0; 768 359); autoresize = RM+BM; layer = <CALayer: 0x7fc82d338960>>
-```
-
-改变颜色：
-
-```
-(lldb) expr ((UIView *)0x174197010).backgroundColor = [UIColor redColor]
-(UICachedDeviceRGBColor *) $4 = 0x0000000174469cc0
-```
-
-剩下的就是去代码中找到这个视图，然后修改其约束了。
-
-
-
-### Adding an Identifier to a Constraint
-
-The log gets a lot easier to understand if you add an identifier to each constraint (`NSLayoutConstraint` has had an identifier property since iOS 7). In Interface Builder find the constraint and add the identifier in the Attributes inspector (I am using $ as a prefix/suffix to make them stand out in the log):
-
-
-
-​        override func viewDidAppear(_ animated: Bool) {
-
-​            print("\(self.title ?? "") viewDidAppear(\(animated))~~~")
-
-​            super.viewDidAppear(animated)
-
-​            self.view.printConstraints()
-
-​            print("...")
-
-​            self.view.superview?.printConstraints()
-
-​            print("\(self.title ?? "") viewDidAppear(\(animated))...")
-
-​        }
-
-- ​
-
-
-
-
-https://www.jianshu.com/p/d67395deb694
-
-### translatesAutoresizingMaskIntoConstraints
-
-- 把 autoresizingMask 转换为 Constraints
-
-- 即：可以把 frame ，bouds，center 方式布局的视图自动转化为约束形式。（此时该视图上约束已经足够 不需要手动去添加别的约束）
-
-- ### 为什么 translatesAutoresizingMaskIntoConstraints 使用约束布局时候，就要设置为 NO？
-
-  translatesAutoresizingMaskIntoConstraints 的本意是将 frame 布局 自动转化为 约束布局，转化的结果是为这个视图自动添加所有需要的约束，如果我们这时给视图添加自己创建的约束就一定会约束冲突。
-
-  为了避免上面说的约束冲突，我们在代码创建 约束布局 的控件时 直接指定这个视图不能用frame 布局（即translatesAutoresizingMaskIntoConstraints=NO），可以放心的去使用约束了。
-
-
-
 //addButton.autoPinEdge(toSuperviewEdge: .bottom, withInset: 10.0)//追加到StackView中的内容不需要设置上下边界
-
-
-
-关于是否使用UpdateViewConstraints的讨论：
-
-https://github.com/PureLayout/PureLayout/issues/159
-
-https://github.com/PureLayout/PureLayout/issues/143
-
-还有一篇文章，忘了。
-
-
-
-
-##### Handling View Rotations
-
-As of iOS 8, all rotation-related methods are deprecated. Instead, rotations are treated as a change in the size of the view controller’s view and are therefore reported using the [`viewWillTransition(to:with:)`](https://developer.apple.com/documentation/uikit/uicontentcontainer/1621466-viewwilltransition) method. When the interface orientation changes, UIKit calls this method on the window’s root view controller. That view controller then notifies its child view controllers, propagating the message throughout the view controller hierarchy.
-
-In iOS 6 and iOS 7, your app supports the interface orientations defined in your app’s `Info.plist` file. A view controller can override the [`supportedInterfaceOrientations`](https://developer.apple.com/documentation/uikit/uiviewcontroller/1621435-supportedinterfaceorientations)method to limit the list of supported orientations. Typically, the system calls this method only on the root view controller of the window or a view controller presented to fill the entire screen; child view controllers use the portion of the window provided for them by their parent view controller and no longer participate directly in decisions about what rotations are supported. The intersection of the app's orientation mask and the view controller's orientation mask is used to determine which orientations a view controller can be rotated into.
-
-You can override the [`preferredInterfaceOrientationForPresentation`](https://developer.apple.com/documentation/uikit/uiviewcontroller/1621438-preferredinterfaceorientationfor) for a view controller that is intended to be presented full screen in a specific orientation.
-
-When a rotation occurs for a visible view controller, the [`willRotate(to:duration:)`](https://developer.apple.com/documentation/uikit/uiviewcontroller/1621376-willrotate), [`willAnimateRotation(to:duration:)`](https://developer.apple.com/documentation/uikit/uiviewcontroller/1621458-willanimaterotation), and [`didRotate(from:)`](https://developer.apple.com/documentation/uikit/uiviewcontroller/1621492-didrotate) methods are called during the rotation. The [`viewWillLayoutSubviews()`](https://developer.apple.com/documentation/uikit/uiviewcontroller/1621437-viewwilllayoutsubviews) method is also called after the view is resized and positioned by its parent. If a view controller is not visible when an orientation change occurs, then the rotation methods are never called. However, the [`viewWillLayoutSubviews()`](https://developer.apple.com/documentation/uikit/uiviewcontroller/1621437-viewwilllayoutsubviews) method is called when the view becomes visible. Your implementation of this method can call the [`statusBarOrientation`](https://developer.apple.com/documentation/uikit/uiapplication/1623026-statusbarorientation) method to determine the device orientation.
-
-NoteAt launch time, apps should always set up their interface in a portrait orientation. After the [`application(_:didFinishLaunchingWithOptions:)`](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/1622921-application) method returns, the app uses the view controller rotation mechanism described above to rotate the views to the appropriate orientation prior to showing the window.
-
-
-
-
-
-
-
 ```
 
+
+
+### 执行一次的代码实现
+
+例如，如下代码会出现冲突
+
+```
 public extension DispatchQueue {
     private static var _onceTracker = [String]()
 
@@ -705,8 +632,30 @@ public extension DispatchQueue {
         block()
     }
 }
-
 ```
+
+
+
+
+
+------
+
+## 其他，待补充
+
+### 
+
+
+##### Handling View Rotations
+
+As of iOS 8, all rotation-related methods are deprecated. Instead, rotations are treated as a change in the size of the view controller’s view and are therefore reported using the [`viewWillTransition(to:with:)`](https://developer.apple.com/documentation/uikit/uicontentcontainer/1621466-viewwilltransition) method. When the interface orientation changes, UIKit calls this method on the window’s root view controller. That view controller then notifies its child view controllers, propagating the message throughout the view controller hierarchy.
+
+In iOS 6 and iOS 7, your app supports the interface orientations defined in your app’s `Info.plist` file. A view controller can override the [`supportedInterfaceOrientations`](https://developer.apple.com/documentation/uikit/uiviewcontroller/1621435-supportedinterfaceorientations)method to limit the list of supported orientations. Typically, the system calls this method only on the root view controller of the window or a view controller presented to fill the entire screen; child view controllers use the portion of the window provided for them by their parent view controller and no longer participate directly in decisions about what rotations are supported. The intersection of the app's orientation mask and the view controller's orientation mask is used to determine which orientations a view controller can be rotated into.
+
+You can override the [`preferredInterfaceOrientationForPresentation`](https://developer.apple.com/documentation/uikit/uiviewcontroller/1621438-preferredinterfaceorientationfor) for a view controller that is intended to be presented full screen in a specific orientation.
+
+When a rotation occurs for a visible view controller, the [`willRotate(to:duration:)`](https://developer.apple.com/documentation/uikit/uiviewcontroller/1621376-willrotate), [`willAnimateRotation(to:duration:)`](https://developer.apple.com/documentation/uikit/uiviewcontroller/1621458-willanimaterotation), and [`didRotate(from:)`](https://developer.apple.com/documentation/uikit/uiviewcontroller/1621492-didrotate) methods are called during the rotation. The [`viewWillLayoutSubviews()`](https://developer.apple.com/documentation/uikit/uiviewcontroller/1621437-viewwilllayoutsubviews) method is also called after the view is resized and positioned by its parent. If a view controller is not visible when an orientation change occurs, then the rotation methods are never called. However, the [`viewWillLayoutSubviews()`](https://developer.apple.com/documentation/uikit/uiviewcontroller/1621437-viewwilllayoutsubviews) method is called when the view becomes visible. Your implementation of this method can call the [`statusBarOrientation`](https://developer.apple.com/documentation/uikit/uiapplication/1623026-statusbarorientation) method to determine the device orientation.
+
+NoteAt launch time, apps should always set up their interface in a portrait orientation. After the [`application(_:didFinishLaunchingWithOptions:)`](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/1622921-application) method returns, the app uses the view controller rotation mechanism described above to rotate the views to the appropriate orientation prior to showing the window.
 
 
 
@@ -717,3 +666,6 @@ public extension DispatchQueue {
 - https://www.jianshu.com/p/3a872a0bfe11
 - http://www.cocoachina.com/ios/20160229/15455.html
 - https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/index.html#//apple_ref/doc/uid/TP40010853-CH7-SW1
+
+
+
