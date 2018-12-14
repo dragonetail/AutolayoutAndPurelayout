@@ -27,7 +27,7 @@ class ViewController: BaseViewControllerWithAutolayout {
         ExampleSection(header: "布局尺寸", footer: nil, examples: [
             Example(name: "尺寸拉伸", exampleViewControllerType: HuggingExampleViewController.self),
             Example(name: "尺寸压缩", exampleViewControllerType: CompressionExampleViewController.self),
-            Example(name: " Table图片+多行文字", exampleViewControllerType: CodeTableViewController.self)
+            Example(name: "Table图片+多行文字", exampleViewControllerType: CodeTableViewController.self)
         ]),
         ExampleSection(header: "Apple官方例子", footer: nil, examples: [
             Example(name: "Dynamic Stack View", exampleViewControllerType: DynamicStackViewController.self),

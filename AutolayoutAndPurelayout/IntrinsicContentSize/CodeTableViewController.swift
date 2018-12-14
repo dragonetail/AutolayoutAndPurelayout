@@ -225,7 +225,9 @@ extension CodeTableViewController: UITableViewDelegate {
         //data[indexPath.row] = model
         tableView.beginUpdates()
         cell.setLabelText(model: model)
-        tableView.endUpdates()
+        UIView.animate(withDuration: 0.5) {
+            tableView.endUpdates()
+        }
     }
 }
 

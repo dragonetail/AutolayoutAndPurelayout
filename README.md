@@ -12,24 +12,24 @@
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | [尺寸拉伸](./AutolayoutAndPurelayout/IntrinsicContentSize/HuggingExampleViewController.swift) | 使用 ContentHuggingPriority的例子                            |
 | [尺寸压缩](./AutolayoutAndPurelayout/IntrinsicContentSize/CompressionExampleViewController.swift) | 使用 ContentCompressionResistancePriority的例子              |
-| [Table图片+多行文字](./AutolayoutAndPurelayout/IntrinsicContentSize/CodeTableViewController.swift) | 使用 TableView和定制Cell，构造左侧图片，右侧多行文本，其中一个多行自动计算单元格高度；同时包含了从plist中读取xml数据的示例；以及动态更改TableView中Cell的Label内容，包括高度自动计算。 |
+| [Table图片+多行文字](./AutolayoutAndPurelayout/IntrinsicContentSize/CodeTableViewController.swift) | 使用 TableView和定制Cell，构造左侧图片，右侧多行文本，其中一个多行自动计算单元格高度；同时包含了从plist中读取xml数据的示例；以及动态更改TableView中Cell的Label内容，包括高度自动计算和动画控制。 |
 | [Dynamic Stack View](./AutolayoutAndPurelayout/AppleSample/DynamicStackViewController.swift) | Apple官方文档例子实现，使用 UIScrollView、 UIStackView和Purelayout实现动态内容管理，模拟实现TableView的效果。 |
 | [1.Basic Auto Layout](./AutolayoutAndPurelayout/PurelayoutBasic/PurelayoutExample1ViewController.swift) | Purelayout官方例子，基础布局。                               |
 | [2.Working with Arrays of Views](./AutolayoutAndPurelayout/PurelayoutBasic/PurelayoutExample2ViewController.swift) | Purelayout数组批量布局。                                     |
 | [3.Distributing Views](./AutolayoutAndPurelayout/PurelayoutBasic/PurelayoutExample3ViewController.swift) | Purelayout数组批量分布布局（ autoDistributeViews）。         |
-| [] 4.Leading & Trailing Attributes                           | Purelayout考虑阅读方向进行布局。                             |
-| [5.Cross-Attribute Constraints                               | Purelayout组件交叉重叠，使用轴线（Axis）布局。               |
-| [6.Priorities & Inequalities                                 | Purelayout用约束的 relation和 priority构建一个正方形。       |
-| [7.Animating Constraints                                     | Purelayout约束初始化和更新的示例，用动画显示约束的变化。作为最佳实践抽象，演示了 setupConstraints() 、modifyConstraints() 配合约束变量使用的模板，同时演示了约束中 constant的动态变化操作。 |
-| [] 8.Constraint Identifiers (iOS 7.0+)                       | 演示了Purelayout的autoIdentifyConstraints，对约束进行ID化操作，方便信息查看。具体参见Autolayout调试章节关联描述。 |
-| [9.Layout Margins (iOS 8.0+)                                 | 演示Purelayout使用Margin的约束。这个示例的效果有一点小问题，内嵌时效果与预想不一致，有待调查。 |
-| [10.Constraints Without Installing                           | Purelayout另外一个控制约束的例子，使用 autoInstallConstraints、 autoRemoveConstraints（实际是无效）、 autoCreateAndInstallConstraints和 autoCreateConstraintsWithoutInstalling来动态控制约束变化。（Purelayout中这几个方法的名字有点小问题，实际是创建约束后是否有效的控制） |
-| [11.Basic UIScrollView                                       | Purelayout对ScrollView、Label处理多行文字，自动化高度的布局处理示例。 |
-| [12.Basic Auto Layout with Constraint toggle                 | 另外一个非官方的演示约束constant的动态控制变化的例子。       |
+| [ 4.Leading & Trailing Attributes](./AutolayoutAndPurelayout/PurelayoutBasic/PurelayoutExample4ViewController.swift) | Purelayout考虑阅读方向进行布局。                             |
+| [5.Cross-Attribute Constraints](./AutolayoutAndPurelayout/PurelayoutBasic/PurelayoutExample5ViewController.swift) | Purelayout组件交叉重叠，使用轴线（Axis）布局。               |
+| [6.Priorities & Inequalities](./AutolayoutAndPurelayout/PurelayoutBasic/PurelayoutExample6ViewController.swift) | Purelayout用约束的 relation和 priority构建一个正方形。       |
+| [7.Animating Constraints](./AutolayoutAndPurelayout/PurelayoutBasic/PurelayoutExample7ViewController.swift) | Purelayout约束初始化和更新的示例，用动画显示约束的变化。作为最佳实践抽象，演示了 setupConstraints() 、modifyConstraints() 配合约束变量使用的模板，同时演示了约束中 constant的动态变化操作。 |
+| [8.Constraint Identifiers (iOS 7.0+)](./AutolayoutAndPurelayout/PurelayoutBasic/PurelayoutExample8ViewController.swift) | 演示了Purelayout的autoIdentifyConstraints，对约束进行ID化操作，方便信息查看。具体参见Autolayout调试章节关联描述。 |
+| [9.Layout Margins (iOS 8.0+)](./AutolayoutAndPurelayout/PurelayoutBasic/PurelayoutExample9ViewController.swift) | 演示Purelayout使用Margin的约束。这个示例的效果有一点小问题，内嵌时效果与预想不一致，有待调查。 |
+| [10.Constraints Without Installing](./AutolayoutAndPurelayout/PurelayoutBasic/PurelayoutExample10ViewController.swift) | Purelayout另外一个控制约束的例子，使用 autoInstallConstraints、 autoRemoveConstraints（实际是无效）、 autoCreateAndInstallConstraints和 autoCreateConstraintsWithoutInstalling来动态控制约束变化。（Purelayout中这几个方法的名字有点小问题，实际是创建约束后是否有效的控制） |
+| [11.Basic UIScrollView](./AutolayoutAndPurelayout/PurelayoutBasic/PurelayoutExample11ViewController.swift) | Purelayout对ScrollView、Label处理多行文字，自动化高度的布局处理示例。 |
+| [12.Basic Auto Layout with Constraint toggle](./AutolayoutAndPurelayout/PurelayoutBasic/PurelayoutExample12ViewController.swift) | 另外一个非官方的演示约束constant的动态控制变化的例子。       |
 
 
 
-## Layout处理流程
+## Layout处理流程基础概念
 
 Auto Layout追加了两个步骤在视图显示的过程中：updating constraints（约束更新） and laying out views（视图布局）。整个过程行程了依赖处理链条，视图显示依赖视图布局、布局依赖约束更新。
 
@@ -45,7 +45,18 @@ Auto Layout追加了两个步骤在视图显示的过程中：updating constrain
 
 
 
-## Auto Layout定制化视图
+**【汇总说明】**必须明确AutoLayout关于更新的几个方法的区别
+
+- setNeedsLayout：告知系统画面需要更新，但是不会立刻开始更新。执行后系统会稍后立刻调用layoutSubviews。
+- layoutIfNeeded：告知页面布局立刻更新。所以一般都会和setNeedsLayout一起使用。如果希望立刻生成新的frame需要调用此方法，利用这点一般布局动画可以在更新布局后直接使用这个方法让动画生效。
+- layoutSubviews：系统执行布局重新处理，使用Autolayout的情况基本不需要特殊工作。
+- setNeedsUpdateConstraints：告知系统需要更新约束，但是不会立刻开始，等到下一次layout过程会被执行
+- updateConstraintsIfNeeded：告知立刻重新计算更新约束
+- updateConstraints：系统计算更新约束，使用Autolayout需要重点实现的部分。这个方法在视图生命周期可能会被多次调用，但是相同的或者互相影响的约束多次被计算会导致性能或者冲突问题，因此需要区分初始化设置和变化部分，变化部分需要考虑同事件和组件的关联处理，以及屏幕旋转的处理等。这部分已经抽象到基础类，设计setupConstraints() 、modifyConstraints() 两个方法让子类去继承实现，详细参见Autolayout最佳实践章节。
+
+
+
+## Auto Layout定制化视图的概念
 
 Auto Layout定制化视图处理需要处理：计算内部内容期望尺寸显示大小、理解视图尺寸和对齐矩阵、使用基线布局、同Layout处理流程交互。
 
@@ -119,9 +130,9 @@ UIView的[`requiresConstraintBasedLayout`](https://developer.apple.com/library/m
 
 在UIView的 [`updateConstraints`](https://developer.apple.com/library/mac/documentation/Cocoa/Reference/ApplicationKit/Classes/NSView_Class/Reference/NSView.html#//apple_ref/occ/instm/NSView/updateConstraints)中实现自定义的本地约束，并保证在最后调用父类的 [`updateConstraints`](https://developer.apple.com/library/mac/documentation/Cocoa/Reference/ApplicationKit/Classes/NSView_Class/Reference/NSView.html#//apple_ref/occ/instm/NSView/updateConstraints)。
 
-在这个步骤中，你不能无效（invalidate）任何约束，因为这一步是由layout process发起的，系统会报告程序错误。
+在这个步骤中，你不能无效（invalidate）任何约束，因为这一步是由layout process发起的，系统会报告程序错误。（这句话有点问题，待考究。）
 
-如果一些约束需要更改（invalidate），你应该在需要的地方，例如按钮的响应事件中，尽快删除对应的约束，并且调用 [`setNeedsUpdateConstraints`](http://developer.apple.com/library/ios/documentation/UIKit/Reference/UIView_Class/UIView/UIView.html#//apple_ref/occ/instm/UIView/setNeedsUpdateConstraints)。
+如果一些约束需要更改（invalidate），你应该在需要的地方，例如按钮的响应事件中，尽快删除对应的约束，并且调用 [`setNeedsUpdateConstraints`](http://developer.apple.com/library/ios/documentation/UIKit/Reference/UIView_Class/UIView/UIView.html#//apple_ref/occ/instm/UIView/setNeedsUpdateConstraints)。（参考最佳实践章节的思路，这个作为第三方建议，不作为最佳实践采用。）
 
 #### 控制子视图的布局（Control Layout of Subviews）
 
@@ -155,7 +166,7 @@ UIView的[`requiresConstraintBasedLayout`](https://developer.apple.com/library/m
 
 ## 内容期望尺寸和多行文本（Intrinsic Content Size of Multi-Line Text）
 
- `UILabel` 和 `NSTextField` 的内容期望尺寸特别对于多行，高度依赖宽度和文本的内容数量。而宽度在约束解决之前还没有确定，为了解决这个问题，这两个控件追加了一个 [`preferredMaxLayoutWidth`](http://developer.apple.com/library/ios/documentation/uikit/reference/UILabel_Class/Reference/UILabel.html#//apple_ref/occ/instp/UILabel/preferredMaxLayoutWidth)属性用于计算最大行宽。
+ `UILabel` 和 `NSTextField` 的内容期望尺寸特别对于多行，高度依赖宽度和文本的内容数量。而宽度在约束解决之前还没有确定，为了解决这个问题，这两个控件追加了一个 [`preferredMaxLayoutWidth`](http://developer.apple.com/library/ios/documentation/uikit/reference/UILabel_Class/Reference/UILabel.html#//apple_ref/occ/instp/UILabel/preferredMaxLayoutWidth)属性用于计算最大行宽。（这一章节的内容在最新的Swift4.2版本下面，已经不需要这么麻烦了，请参见 [Table图片+多行文字](./AutolayoutAndPurelayout/IntrinsicContentSize/CodeTableViewController.swift) 示例的实现。）
 
 我们通常不知道这个值是多少，这个时候需要两步处理，第一遍根据约束计算出Label的frame大小，然后设定preferredMaxLayoutWidth，然后重新再计算一遍约束，来得到正确的高度。
 
@@ -199,63 +210,13 @@ UIView的[`requiresConstraintBasedLayout`](https://developer.apple.com/library/m
 
 ## 动画（Animation）
 
-When it comes to animating views laid out with Auto Layout, there are two fundamentally different strategies: Animating the constraints themselves, and changing the constraints to recalculate the frames and use Core Animation to interpolate between the old and the new position.
+动画根据约束的控制实现方式不同，请参照示例：
 
-The difference between the two approaches is that animating constraints themselves results in a layout that conforms to the constraint system at all times. Meanwhile, using Core Animation to interpolate between old and new frames violates constraints temporarily.
 
-Directly animating constraints is really only a feasible strategy on OS X, and it is limited in what you can animate, since only a constraint’s constant can be changed after creating it. On iOS you would have to drive the animation manually, whereas on OS X you can use an animator proxy on the constraint’s constant. Furthermore, this approach is significantly slower than the Core Animation approach, which also makes it a bad fit for mobile platforms for the time being.
 
-When using the Core Animation approach, animation conceptually works the same way as without Auto Layout. The difference is that you don’t set the views’ target frames manually, but instead you modify the constraints and trigger a layout pass to set the frames for you. On iOS, instead of:
 
-```
-[UIView animateWithDuration:1 animations:^{
-    myView.frame = newFrame;
-}];
-```
 
-you now write:
 
-```
-// update constraints
-[UIView animateWithDuration:1 animations:^{
-    [myView layoutIfNeeded];
-}];
-```
-
-Note that with this approach, the changes you can make to the constraints are not limited to the constraints’ constants. You can remove constraints, add constraints, and even use temporary animation constraints. Since the new constraints only get solved once to determine the new frames, even more complex layout changes are possible.
-
-The most important thing to remember when animating views using Core Animation in conjunction with Auto Layout is to not touch the views’ frame yourself. Once a view is laid out by Auto Layout, you’ve transferred the responsibility to set its frame to the layout system. Interfering with this will result in weird behavior.
-
-This means also that view transforms don’t always play nice with Auto Layout if they change the view’s frame. Consider the following example:
-
-```
-[UIView animateWithDuration:1 animations:^{
-    myView.transform = CGAffineTransformMakeScale(.5, .5);
-}];
-```
-
-Normally we would expect this to scale the view to half its size while maintaining its center point. But the behavior with Auto Layout depends on the kind of constraints we have set up to position the view. If we have it centered within its super view, the result is as expected, because applying the transform triggers a layout pass which centers the new frame within the super view. However, if we have aligned the left edge of the view to another view, then this alignment will stick and the center point will move.
-
-Anyway, applying transforms like this to views laid out with constraints is not a good idea, even if the result matches our expectations at first. The view’s frame gets out of sync with the constraints, which will lead to strange behavior down the road.
-
-If you want to use transforms to animate a view or otherwise animate its frame directly, the cleanest technique to do this is to [embed the view into a container view](http://stackoverflow.com/a/14119154). Then you can override `layoutSubviews` on the container, either opting out of Auto Layout completely or only adjusting its result. For example, if we setup a subview in our container which is laid out within the container at its top and left edges using Auto Layout, we can correct its center after the layout happens to enable the scale transform from above:
-
-```
-- (void)layoutSubviews
-{
-    [super layoutSubviews];
-    static CGPoint center = {0,0};
-    if (CGPointEqualToPoint(center, CGPointZero)) {
-        // grab the view's center point after initial layout
-        center = self.animatedView.center;
-    } else {
-        // apply the previous center to the animated view
-        self.animatedView.center = center;
-    }
-}
-```
-
-If we expose the `animatedView` property as an IBOutlet, we can even use this container within Interface Builder and position its subview with constraints, while still being able to apply the scale transform with the center staying fixed.
 
 ### 调试
 
@@ -660,16 +621,7 @@ The log gets a lot easier to understand if you add an identifier to each constra
 
 ​        }
 
-
-
-### 必须明确AutoLayout关于更新的几个方法的区别
-
-- setNeedsLayout：告知页面需要更新，但是不会立刻开始更新。执行后会立刻调用layoutSubviews。
-- layoutIfNeeded：告知页面布局立刻更新。所以一般都会和setNeedsLayout一起使用。如果希望立刻生成新的frame需要调用此方法，利用这点一般布局动画可以在更新布局后直接使用这个方法让动画生效。
-- layoutSubviews：系统重写布局
-- setNeedsUpdateConstraints：告知需要更新约束，但是不会立刻开始
-- updateConstraintsIfNeeded：告知立刻更新约束
-- updateConstraints：系统更新约束
+- ​
 
 
 
