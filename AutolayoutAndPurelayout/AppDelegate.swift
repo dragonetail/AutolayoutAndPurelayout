@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  AutolayoutAndPurelayout
 //
-//  Created by 孙玉新 on 2018/12/11.
+//  Created by dragonetail on 2018/12/11.
 //  Copyright © 2018 dragonetail. All rights reserved.
 //
 

@@ -2,7 +2,7 @@
 //  BaseViewWithAutolayout.swift
 //  AutolayoutAndPurelayout
 //
-//  Created by 孙玉新 on 2018/12/13.
+//  Created by dragonetail on 2018/12/13.
 //  Copyright © 2018 dragonetail. All rights reserved.
 //
 

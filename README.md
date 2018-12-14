@@ -10,15 +10,22 @@
 
 | 例子                                                         | 说明                                                         |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| [尺寸拉伸](.AutolayoutAndPurelayout/IntrinsicContentSize/HuggingExampleViewController.swift) | 使用 ContentHuggingPriority的例子                            |
-| [尺寸压缩](.AutolayoutAndPurelayout/IntrinsicContentSize/CompressionExampleViewController.swift) | 使用 ContentCompressionResistancePriority的例子              |
-| [Table图片+多行文字](.AutolayoutAndPurelayout/IntrinsicContentSize/CodeTableViewController.swift) | 使用 TableView和定制Cell，构造左侧图片，右侧多行文本，其中一个多行自动计算单元格高度；同时包含了从plist中读取xml数据的示例；以及动态更改TableView中Cell的Label内容，包括高度自动计算。 |
-|                                                              |                                                              |
-|                                                              |                                                              |
-|                                                              |                                                              |
-|                                                              |                                                              |
-|                                                              |                                                              |
-|                                                              |                                                              |
+| [尺寸拉伸](./AutolayoutAndPurelayout/IntrinsicContentSize/HuggingExampleViewController.swift) | 使用 ContentHuggingPriority的例子                            |
+| [尺寸压缩](./AutolayoutAndPurelayout/IntrinsicContentSize/CompressionExampleViewController.swift) | 使用 ContentCompressionResistancePriority的例子              |
+| [Table图片+多行文字](./AutolayoutAndPurelayout/IntrinsicContentSize/CodeTableViewController.swift) | 使用 TableView和定制Cell，构造左侧图片，右侧多行文本，其中一个多行自动计算单元格高度；同时包含了从plist中读取xml数据的示例；以及动态更改TableView中Cell的Label内容，包括高度自动计算。 |
+| [Dynamic Stack View](./AutolayoutAndPurelayout/AppleSample/DynamicStackViewController.swift) | Apple官方文档例子实现，使用 UIScrollView、 UIStackView和Purelayout实现动态内容管理，模拟实现TableView的效果。 |
+| [1.Basic Auto Layout](./AutolayoutAndPurelayout/PurelayoutBasic/PurelayoutExample1ViewController.swift) | Purelayout官方例子，基础布局。                               |
+| [2.Working with Arrays of Views](./AutolayoutAndPurelayout/PurelayoutBasic/PurelayoutExample2ViewController.swift) | Purelayout数组批量布局。                                     |
+| [3.Distributing Views](./AutolayoutAndPurelayout/PurelayoutBasic/PurelayoutExample3ViewController.swift) | Purelayout数组批量分布布局（ autoDistributeViews）。         |
+| [] 4.Leading & Trailing Attributes                           | Purelayout考虑阅读方向进行布局。                             |
+| [5.Cross-Attribute Constraints                               | Purelayout组件交叉重叠，使用轴线（Axis）布局。               |
+| [6.Priorities & Inequalities                                 | Purelayout用约束的 relation和 priority构建一个正方形。       |
+| [7.Animating Constraints                                     | Purelayout约束初始化和更新的示例，用动画显示约束的变化。作为最佳实践抽象，演示了 setupConstraints() 、modifyConstraints() 配合约束变量使用的模板，同时演示了约束中 constant的动态变化操作。 |
+| [] 8.Constraint Identifiers (iOS 7.0+)                       | 演示了Purelayout的autoIdentifyConstraints，对约束进行ID化操作，方便信息查看。具体参见Autolayout调试章节关联描述。 |
+| [9.Layout Margins (iOS 8.0+)                                 | 演示Purelayout使用Margin的约束。这个示例的效果有一点小问题，内嵌时效果与预想不一致，有待调查。 |
+| [10.Constraints Without Installing                           | Purelayout另外一个控制约束的例子，使用 autoInstallConstraints、 autoRemoveConstraints（实际是无效）、 autoCreateAndInstallConstraints和 autoCreateConstraintsWithoutInstalling来动态控制约束变化。（Purelayout中这几个方法的名字有点小问题，实际是创建约束后是否有效的控制） |
+| [11.Basic UIScrollView                                       | Purelayout对ScrollView、Label处理多行文字，自动化高度的布局处理示例。 |
+| [12.Basic Auto Layout with Constraint toggle                 | 另外一个非官方的演示约束constant的动态控制变化的例子。       |
 
 
 
