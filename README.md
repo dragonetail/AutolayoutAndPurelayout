@@ -1,8 +1,8 @@
-#  Autolayout和Purelayout
+#  Autolayout和Purelayout最佳实践
 
 ## 目标
 
-整理和学习Autolayout和Purelayout的概念，梳理关联的例子程序，联系掌握各种实用手法。
+整理和学习Autolayout和Purelayout的概念，梳理关联的例子程序，联系掌握各种实用手法，确定使用Autolayout的最佳实践。
 
 
 
